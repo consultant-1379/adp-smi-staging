@@ -1,0 +1,73 @@
+demo-ui-service-ecm:
+  ingress:
+    enabled: true
+    useContour: true
+    hostname: localhost
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+demo-ui-service-eea:
+  ingress:
+    enabled: true
+    useContour: true
+    hostname: localhost
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+demo-ui-service-enm:
+  ingress:
+    enabled: true
+    useContour: true
+    hostname: localhost
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+demo-ui-service-esmb:
+  resources:
+    main:
+      limits:
+        cpu: 2000m
+        memory: 512Mi
+      requests:
+        cpu: 1000m
+        memory: 256Mi
+
+demo-ui-service-eui1:
+  resources:
+    main:
+      limits:
+        cpu: 2000m
+        memory: 512Mi
+      requests:
+        cpu: 1000m
+        memory: 256Mi
+
+demo-ui-service-eui2:
+  resources:
+    main:
+      limits:
+        cpu: 2000m
+        memory: 512Mi
+      requests:
+        cpu: 1000m
+        memory: 256Mi
+
+demo-ui-service-action-consumer:
+  resources:
+    main:
+      limits:
+        cpu: 2000m
+        memory: 512Mi
+      requests:
+        cpu: 1000m
+        memory: 256Mi
+
+demo-ui-service-action-provider:
+  resources:
+    main:
+      limits:
+        cpu: 2000m
+        memory: 512Mi
+      requests:
+        cpu: 1000m
+        memory: 256Mi

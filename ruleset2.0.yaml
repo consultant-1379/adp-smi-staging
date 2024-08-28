@@ -1,0 +1,809 @@
+modelVersion: 2.0
+import:
+  functions: ruleset-functions.yaml
+
+docker-images:
+  - nodejs-builder: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/adp-nodejs-lts-builder-image:20.12.2-0
+  - adp-release-auto: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-adp-release-auto:latest
+  - adp-helm-dr-check: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/adp-helm-dr-checker:latest
+  - adp-image-dr-check: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/adp-image-dr-check:latest
+  - docbuilder: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-docbuilder:latest
+  - ci-toolbox: armdocker.rnd.ericsson.se/proj-eea-drop/ci-toolbox:latest
+  - hadolint-scan: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/hadolint-scan:latest
+  - k8-test: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-py3kubehelmbuilder:latest
+
+var:
+  - version
+  - image-full-name-internal
+  - rstate
+  - image-repo-path-internal
+  - helm-chart-repo-internal
+  - helm-chart-file-name
+  - ingress-hostname
+  - ha-ingress-hostname
+  - dst-ingress-hostname
+  - uis-ingress-hostname
+  - ingress-iccr-ip
+  - ingress-iccr-path
+  - ingress-protocol
+  - semver
+  - kubernetes-version
+  - helm-version
+  - docker-image-size
+  - install-start-time
+  - install-finish-time
+  - run-type
+  - pri_params
+  - sha256-helm
+  - sha256-image
+  - fossa-id
+  - additional-chart-values
+  - additional-chart-values-file
+  - additional-dependencies-chart-values
+  - additional-dependencies-chart-values-ha
+  - additional-dependencies-chart-values-uis
+  - additional-dependencies-chart-values-file
+  - additional-mocks-and-deps-chart-values
+  - doc-version
+  - mock-doc-version
+  - mock-doc-version-test
+  - k8s-namespace
+  - all-document-placeholder-map
+  - hostname
+  - demo-ingress-url
+  - token
+  - rnd-token
+  - spin-cli-dockerfile-changes
+  - hostname
+  - loadbalancer-ip
+
+properties:
+  - docker-image-name: ${functions.docker-image-name}
+  - helm-chart-name-gas: ${functions.helm-chart-name-gas}
+  - helm-chart-name-ci: ${functions.helm-chart-name-ci}
+  - microservice-name: "Lightweight GUI Aggregator service"
+  - image-registry: ${functions.image-registry}
+  - image-dev-repo-path: proj-eea-dev
+  - image-ci-repo-path: proj-eea-ci-internal
+  - image-drop-repo-path: proj-eea-drop
+  - image-full-name: ${image-registry}/${image-drop-repo-path}/${docker-image-name}
+  - image-internal-name: ${image-registry}/${image-ci-repo-path}/${docker-image-name}
+  - image-base-os-version: "5.10.0-18"
+  - helm-chart-repo-server: ${functions.helm-chart-repo-server}
+  - helm-chart-dev-repo-path: proj-eea-dev-helm
+  - helm-chart-ci-repo-path: proj-eea-ci-internal-helm
+  - helm-chart-drop-repo-path: proj-eea-drop-helm
+  - helm-chart-drop-repo: ${helm-chart-repo-server}/${helm-chart-drop-repo-path}
+  - helm-chart-release-repo-path: proj-eea-released-helm
+  - helm-chart-release-repo: ${helm-chart-repo-server}/${helm-chart-release-repo-path}
+  - test-dummy-chart-name: domain-ui-generic
+  - test-dummy-chart-name-ha: domain-ui-generic-oss-helper
+  - helm-chart-name-docs: ${functions.helm-chart-name-docs}
+  - helm-chart-name-gas-mock: demo-ui-service
+  - helm-chart-name-ha-mock: help-center-mock
+  - helm-chart-name-dst-query: eric-dst-query
+  - test-dummy-chart-file-name: ${test-dummy-chart-name}-${var.version}.tgz
+  - doc-arm-dev-path: proj-cea-external-local/eric-adp-gui-aggregator-service # TODO: create docs repo in ARM for EEA and ADP. eg.: proj-eea-marketplace-docs-dev-generic-local/eric-adp-gui-aggregator-service
+  - system-test-from-version: 1.0.0-0 #TODO: find out this version automatically
+  - image-pullsecret: arm-pullsecret
+  - repositories-yaml-path: .bob/repositories.yaml
+  - jenkins-files-path: ci
+  - gerrit-url: https://gerrit.ericsson.se/a/plugins/gitiles/EEA/adp-smi-staging
+  - git-clone-url: https://gerrit.ericsson.se/EEA/adp-smi-staging.git
+  - iam-realm: oam
+  - iam-admin-password: 4dm1N_login_pwd
+  - arm-auth-url: ${helm-chart-repo-server}/api/npm/auth
+  - rnd-arm-auth-url: https://arm.rnd.ki.sw.ericsson.se/artifactory/api/npm/auth
+  - spin-cli-image-name: adp-smi-staging-spin-cli
+  - spin-cli-dockerfile-path: ci/spinnaker/spin-cli.dockerfile
+
+  # Values.yaml files
+  - ci-chart-config-yaml: ci/config/ci-chart.yaml
+  - mocks-enable-yaml: ci/config/mocks-enable.yaml
+  - pcr-chart-values: ci/config/pcr-chart-values.yaml
+  - test-chart-values: ci/config/test-chart-values.yaml
+  - test-ci-chart-values: ci/config/test-ci-chart-values.yaml
+  - demo-chart-values: ci/config/demo-chart-values.yaml
+  - demo-ci-chart-values: ci/config/demo-ci-chart-values.yaml
+  - mocks-enable-demo-yaml: ci/config/mocks-enable-demo.yaml
+  - ci-services-enable-yaml: ci/config/demo-ci-services-enable.yaml
+  - ingress-values: ci/config/ingress-chart.yaml
+
+env:
+  - PWD (default=notset)
+  - ARM_USER_SELI  (default=notset) #Have to set before run
+  - ARM_TOKEN_SELI  (default=notset) #Have to set before run
+  - ARM_USER_SERO  (default=notset) #Have to set before run
+  - ARM_TOKEN_SERO  (default=notset) #Have to set before run
+  - KUBECONFIG (default=notset) #Have to set before run
+  - USER (default=notset)
+  - BUILD_TAG (default=proj-eea-app-local)
+  - BUILD_URL (default=notset)
+  - DEFAULT_DOCKER_FLAGS (default=--init --rm --user $(id -u):$(id -g) --label $(echo ${BUILD_TAG:-proj-eea-app-local}))
+  - TEST_BASE_URL (default=host.docker.internal:14444)
+  - DEMO_NAMESPACE (default=notset)
+  - DRY_RUN (default=false)
+  - GERRIT_EVENT_TYPE (default=notset)
+  - DEPLOY_IAM (default=false)
+  # Default gives the latest
+  - GAS_VERSION (default=>0.0.0-0)
+  # The type of the GAS Helm chart version that you want to deploy (e.g. Drop, Release).
+  - GAS_TYPE (default=Drop)
+  # Default gives the latest
+  - HA_VERSION (default=>0.0.0-0)
+  # The type of the HA Helm chart version that you want to deploy (e.g. Drop, Release).
+  - HA_TYPE(default=Drop)
+  # Default gives the latest
+  - UIS_VERSION (default=>0.0.0-0)
+  # The type of the UIS Helm chart version that you want to deploy (e.g. Drop, Release).
+  - UIS_TYPE(default=Drop)
+  # Te version of the documentation image
+  - DOCS_VERSION (default=>0.0.0-0)
+  - JENKINS_USER (default=notset)
+  - JENKINS_PASS (default=notset)
+
+rules:
+  local-pipeline:
+    - rule: clean
+    - rule: init-dev
+    - rule: npm-install
+    - rule: lint
+
+  # **********
+  #
+  # INIT TASKS
+  #
+  # **********
+
+  clean:
+    - task: rm
+      cmd:
+        - rm -rf .bob/
+        - rm -rf build/
+
+  generate-npm-token:
+    - task: generate-npm-token
+      cmd:
+        - echo $(curl --user ${env.ARM_USER_SELI}:${env.ARM_TOKEN_SELI} ${arm-auth-url} | xargs | cut -d" " -f3) > .bob/var.token
+        - echo $(curl --user ${env.ARM_USER_SERO}:${env.ARM_TOKEN_SERO} ${rnd-arm-auth-url} | xargs | cut -d" " -f3) > .bob/var.rnd-token
+
+  init-dev:
+    - rule: functions.init
+      properties:
+        - is-release: "false"
+        - image-repo-path: ${image-dev-repo-path}
+        - helm-chart-repo-path: ${helm-chart-dev-repo-path}
+        - run-type: "dev"
+    - rule: generate-npm-token
+
+  init-combined:
+    - rule: functions.init
+      properties:
+        - is-release: "false"
+        - image-repo-path: ${image-ci-repo-path}
+        - helm-chart-repo-path: ${helm-chart-ci-repo-path}
+        - run-type: "combined"
+    - rule: generate-npm-token
+
+  init-precodereview:
+    - rule: functions.init
+      properties:
+        - is-release: "false"
+        - image-repo-path: ${image-ci-repo-path}
+        - helm-chart-repo-path: ${helm-chart-ci-repo-path}
+        - run-type: "precodereview"
+    - rule: generate-npm-token
+
+  init-drop:
+    - rule: functions.init
+      properties:
+        - is-release: "true"
+        - image-repo-path: ${image-ci-repo-path}
+        - helm-chart-repo-path: ${helm-chart-ci-repo-path}
+        - run-type: "drop"
+        - pri-param: "--upload"
+    - task: adp-artifacts-properties
+      docker-image: adp-release-auto
+      cmd: generate-adp-artifacts
+        --chart-name ${helm-chart-name-gas}
+        --chart-version ${var.version}
+        --chart-repo ${helm-chart-drop-repo}
+    - task: add-committer-name
+      cmd: echo COMMITTER_NAME=$(git --no-pager show -s --format='%cn') >> artifact.properties
+    - rule: generate-npm-token
+
+  init-demo:
+    - rule: functions.init
+      properties:
+        - is-release: "false"
+        - image-repo-path: ${image-ci-repo-path}
+        - helm-chart-repo-path: ${helm-chart-ci-repo-path}
+        - run-type: "demo"
+    - task: set-k8s-namespace
+      cmd: bash -c '
+        if [ "${env.DEMO_NAMESPACE}" != "notset" ];
+        then echo ${env.DEMO_NAMESPACE} > .bob/var.k8s-namespace;fi'
+    - rule: generate-npm-token
+
+  init-docs:
+    - rule: functions.init
+      properties:
+        - is-doc-release: "false"
+        - image-repo-path: ${image-ci-repo-path}
+        - helm-chart-repo-path: ${helm-chart-ci-repo-path}
+        - run-type: "docs"
+    - rule: generate-npm-token
+
+  init-docs-merged:
+    - rule: functions.init
+      properties:
+        - is-doc-release: "true"
+        - image-repo-path: ${image-ci-repo-path}
+        - helm-chart-repo-path: ${helm-chart-ci-repo-path}
+        - run-type: "docs"
+    - rule: generate-npm-token
+
+  npm-install:
+    - task: npm
+      docker-image: nodejs-builder
+      docker-flags:
+        - "--env NODE_ENV=" # Unset production flag
+        - "--env ARM_NPM_TOKEN=${var.token}"
+        - "--env RND_ARM_NPM_TOKEN=${var.rnd-token}"
+      cmd:
+        - npm run ci:all
+
+  # **********
+  #
+  # SCAN TASKS
+  #
+  # **********
+
+  lint:
+    # TODO: documentation specific lint
+    - task: commit-msg-lint
+      docker-image: nodejs-builder
+      cmd:
+        - node git-hooks/commit-msg.d/smi-commit-msg.js "$(git log --format=%B -n1)"
+    - task: validate-jenkins-files
+      docker-image: ci-toolbox
+      docker-flags:
+        - "--env JENKINS_USER=${env.JENKINS_USER}"
+        - "--env JENKINS_PASS=${env.JENKINS_PASS}"
+      cmd: jenkinsfile_validator.sh --jenkinsfiles-path ${jenkins-files-path}
+    - task: helm
+      docker-image: adp-release-auto
+      cmd: helm lint charts/${helm-chart-name-ci}
+    - task: markdownlint
+      docker-image: nodejs-builder
+      cmd:
+        # npm run lint:markdownlint does not work as the glob does not mach any md file in this env
+        - node_modules/.bin/markdownlint $(git ls-files -- \*\.md | cat | xargs)
+    - task: vale
+      docker-image: docbuilder
+      cmd:
+        - >
+          bash -c '
+          vale $(git ls-files -- \*\.md ":!:*fragment.md" | cat | xargs);
+
+          if [ $? -ne 0 ]; then
+            echo "Linting error (Vale): there are spelling errors"
+            exit 1
+          fi'
+    - task: jslint
+      docker-image: nodejs-builder
+      cmd:
+        - npm run lint:js
+        - npm run lint:package-lock
+
+  ruleset-validation-helper:
+    - task: validate-rules
+      cmd:
+        - git diff HEAD^ --name-only | grep -oE '^ruleset.*\.yaml$|ci/rulesets/.*\.yaml' | wc -l
+
+  # **********
+  #
+  # TEST TASKS
+  #
+  # **********
+
+  generate-ci-chart:
+    - task: prepare-repositories-yaml
+      cmd:
+        - mkdir -p .bob
+        - cp repositories.yaml.template ${repositories-yaml-path}
+        - sed -i "s/USERNAME/${env.ARM_USER_SELI}/" ${repositories-yaml-path}
+        - sed -i "s/ARM_TOKEN_SERO/${env.ARM_TOKEN_SERO}/" ${repositories-yaml-path}
+        - sed -i "s/ARM_TOKEN_SELI/${env.ARM_TOKEN_SELI}/" ${repositories-yaml-path}
+    - task: copy-ci-base
+      cmd:
+        - mkdir -p .bob/ci-extended-chart
+        - cp -r charts/ci/. .bob/ci-extended-chart
+    - task: update-dummy-service-version
+      cmd:
+        - >
+          bash -c "
+          cd .bob/ci-extended-chart;
+          sed -i '/name: ${helm-chart-name-docs}/,/version: ~0.0.0-0/ s/~0.0.0-0/${var.functions.docs-mock-version}/' Chart.yaml;
+          sed -i '/name: ${helm-chart-name-docs}/,/version: ~0.0.0-0/ s/~0.0.0-0/${var.functions.docs-mock-version}/' Chart.yaml;
+          sed -i '/name: ${test-dummy-chart-name-ha}/,/version: ~0.0.0-0/ s/~0.0.0-0/${var.functions.ha-mock-version}/' Chart.yaml;
+          sed -i '/name: ${functions.helm-chart-name-ha}/,/version: ~0.0.0-0/ s/~0.0.0-0/${var.functions.ha-version}/' Chart.yaml;
+          sed -i '/name: ${functions.helm-chart-name-ha}/,/alias: ${functions.helm-chart-name-ha}/ s/${helm-chart-drop-repo-path}/${var.functions.ha-helm-repo}/' Chart.yaml;
+          sed -i '/name: ${functions.helm-chart-name-uis}/,/version: ~0.0.0-0/ s/~0.0.0-0/${var.functions.uis-version}/' Chart.yaml;
+          sed -i '/name: ${functions.helm-chart-name-uis}/,/alias: ${functions.helm-chart-name-uis}/ s/${helm-chart-drop-repo-path}/${var.functions.uis-helm-repo}/' Chart.yaml;
+          sed -i '/name: ${test-dummy-chart-name}/,/version: ~0.0.0-0/ s/~0.0.0-0/${var.functions.gas-mock-version}/' Chart.yaml;
+          "
+    - task: create-and-fetch-subcharts
+      docker-image: adp-release-auto
+      docker-flags:
+        - "--env ENABLE_HELM_V3=true"
+      cmd: helm-package
+        --folder .bob/ci-extended-chart
+        --workdir .bob
+        --output .bob
+        --version 0.0.0
+        --helm-credentials ${repositories-yaml-path}
+
+  install-gas:
+    - task: save-install-start-time
+      cmd:
+        - date "+%s" > .bob/var.install-start-time
+    - rule: service-install-test
+    - task: save-install-finish-time
+      cmd:
+        - date "+%s" > .bob/var.install-finish-time
+    - task: echo-gas-installed
+      cmd: echo "GAS installation completed"
+
+  install-gas-and-create-iam-realm:
+    - rule: service-install-test-and-realm
+
+  service-install-test:
+    - rule: get-versions
+    - task: system-test
+      docker-image: k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd:
+        - test.py --helm-v3 --kubernetes-admin-conf=${env.KUBECONFIG}
+          --helm-user=${env.ARM_USER_SELI}
+          --arm-api-token=${env.ARM_TOKEN_SELI}
+          --kubernetes-namespace=${var.k8s-namespace}
+          --chart-archive=.bob/${helm-chart-name-gas}-internal/${var.helm-chart-file-name}
+          --helm-repo=${helm-chart-drop-repo}
+          --docker-server=${image-registry}
+          --docker-username=${env.ARM_USER_SELI}
+          --docker-password=${env.ARM_TOKEN_SELI}
+          --secret-name=${image-pullsecret}
+          --helm_variables="${var.additional-chart-values}"
+          --helm_value_file="${var.additional-chart-values-file}"
+          --skip-upgrade-test
+          --baseline_chart_version=${system-test-from-version}
+          --helm-timeout=1200
+          --skip-cleanup
+          --ignore-cleanup
+
+  service-install-test-and-realm:
+    - task: system-test
+      cmd: >
+        bash -c '
+          bob install-gas &
+          if ${env.DEPLOY_IAM};
+            then
+              sleep 60
+              bob wait-for-gas-iam-cert &
+              bob create-iam-realm &
+          fi
+          wait
+          '
+    - task: assign-gas-role
+      docker-image: nodejs-builder
+      docker-flags:
+        - "--env HOSTNAME=iam.${var.ingress-hostname}"
+        - "--env REALM=${iam-realm}"
+        - "--env ADMIN_PASSWORD=${iam-admin-password}"
+        - "--env NAMESPACE=${var.k8s-namespace}"
+        - "--env SET_ROLE=true"
+      cmd: >
+        bash -c '
+          if ${env.DEPLOY_IAM};
+            then
+              node ci/scripts/keycloak-rest.js
+          fi
+        '
+
+  get-versions:
+    - task: get-environment-versions
+      docker-image: k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd:
+        - kubectl version --short | grep "Server Version" | sed -e 's#.*v\(\)#\1#' > .bob/var.kubernetes-version
+        - helm version --short > .bob/var.helm-version
+
+  namespace-cleanup:
+    - task: kubernetes-namespace-clean
+      docker-image: k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd:
+        - kubectl delete namespace ${var.k8s-namespace}
+
+  k8-cluster-prepare:
+    - task: create-namespace
+      docker-image: k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+      cmd: "kubectl create namespace ${var.k8s-namespace} || true"
+    - task: create-pull-secret
+      docker-image: k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+      cmd: "kubectl create secret docker-registry arm-pullsecret \
+        --docker-server=armdocker.rnd.ericsson.se \
+        --docker-username=${env.ARM_USER_SELI} \
+        --docker-password=${env.ARM_TOKEN_SELI} \
+        --namespace ${var.k8s-namespace} || true"
+
+  create-iam-realm:
+    - task: create-realm
+      docker-image: nodejs-builder
+      docker-flags:
+        - "--env HOSTNAME=iam.${var.ingress-hostname}"
+        - "--env REALM=${iam-realm}"
+        - "--env ADMIN_PASSWORD=${iam-admin-password}"
+        - "--env NAMESPACE=${var.k8s-namespace}"
+        - "--env SET_ROLE=false"
+      cmd: >
+        bash -c '
+          if ${env.DEPLOY_IAM};
+            then
+              node ci/scripts/keycloak-rest.js
+          fi
+        '
+
+  wait-for-gas-iam-cert:
+    - task: wait-for-gas-iam-cert
+      docker-image: k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: >
+        bash -c '
+          SECONDS=0
+          while (( $SECONDS < 300 )) ; do
+            secret=$(kubectl get secret eric-sec-sip-tls-trusted-root-cert -n ${var.k8s-namespace} -o json)
+            if [[ $secret ]]; then
+              echo "GAS IAM Client certificate was successfully fetched!"
+              break;
+            else
+              echo "GAS IAM Client certificate is not available yet"
+              sleep 30
+            fi
+          done
+          wait
+          '
+
+  set-repos:
+    - task: gas-helm-repo
+      cmd: >
+        bash -c '
+          if [ "${env.GAS_TYPE}" = "latest release" ] || [[ "${env.GAS_VERSION}" == *"+"* ]];
+            then
+              echo "${helm-chart-release-repo}" > .bob/var.gas-helm-repo;
+            else
+              echo "${helm-chart-drop-repo}" > .bob/var.gas-helm-repo;
+          fi'
+    - task: ha-helm-repo
+      cmd: >
+        bash -c '
+          if [ "${env.HA_TYPE}" = "latest release" ] || [[ "${env.HA_VERSION}" == *"+"* ]];
+            then
+              echo "${functions.helm-release}" > .bob/var.ha-helm-repo;
+            else
+              echo "${functions.helm-drop}" > .bob/var.ha-helm-repo;
+          fi'
+    - task: uis-helm-repo
+      cmd: >
+        bash -c '
+          if [ "${env.UIS_TYPE}" = "latest release" ] || [[ "${env.UIS_VERSION}" == *"+"* ]];
+            then
+              echo "${functions.helm-release}" > .bob/var.uis-helm-repo;
+            else
+              echo "${functions.helm-drop}" > .bob/var.uis-helm-repo;
+          fi'
+
+  set-ha-version:
+    - task: ha-version
+      cmd: >
+        bash -c '
+          if [ "${env.HA_TYPE}" = "latest drop" ] || [ "${env.HA_TYPE}" = "latest release" ];
+            then
+              curl -L -H "X-JFrog-Art-Api:${env.ARM_TOKEN_SELI}" ${functions.helm-artifactory-ha} -o .bob/var.ha-all-releases;
+              sed -i "s/[a-zA-Z]\+//g;s/< =*.*----//g;s/<.*$//g;s/.*>.*$//g;s/[.][0-9]*$//g;s/[.] *$//g;/^$/d" .bob/var.ha-all-releases;
+              sed -i '/dirty/d' .bob/var.ha-all-releases
+              sort -V -u -b -r -o .bob/var.ha-all-releases .bob/var.ha-all-releases;
+              cut -d" " -f1 .bob/var.ha-all-releases | sed -n 1p > .bob/var.ha-version;
+            else
+              echo "${env.HA_VERSION}" | sed "s/>/~/" > .bob/var.ha-version;
+          fi'
+
+  set-uis-version:
+    - task: uis-version
+      cmd: >
+        bash -c '
+          if [ "${env.UIS_TYPE}" = "latest drop" ] || [ "${env.UIS_TYPE}" = "latest release" ];
+            then
+              curl -L -H "X-JFrog-Art-Api:${env.ARM_TOKEN_SELI}" ${functions.helm-artifactory-uis} -o .bob/var.uis-all-releases;
+              sed -i "s/[a-zA-Z]\+//g;s/< =*.*----//g;s/<.*$//g;s/.*>.*$//g;s/[.][0-9]*$//g;s/[.] *$//g;/^$/d" .bob/var.uis-all-releases;
+              sed -i '/dirty/d' .bob/var.uis-all-releases
+              sort -V -u -b -r -o .bob/var.uis-all-releases .bob/var.uis-all-releases;
+              cut -d" " -f1 .bob/var.uis-all-releases | sed -n 1p > .bob/var.uis-version;
+            else
+              echo "${env.UIS_VERSION}" | sed "s/>/~/" > .bob/var.uis-version;
+          fi'
+
+  set-mock-versions:
+    - task: gas-mock-version
+      cmd: >
+        bash -c '
+          if [ "${env.GAS_TYPE}" = "latest drop" ] || [ "${env.GAS_TYPE}" = "latest release" ] || [ "${env.GAS_VERSION}" = ">0.0.0-0" ];
+            then
+              curl -L -H "X-JFrog-Art-Api:${env.ARM_TOKEN_SELI}" ${functions.helm-drop-artifactory-gas} -o .bob/var.gas-mock-all-releases;
+              sed -i "s/[a-zA-Z]\+//g;s/< =*.*-----//g;s/<.*$//g;s/.*>.*$//g;s/[.][0-9]*$//g;s/[.] *$//g;/^$/d" .bob/var.gas-mock-all-releases;
+              sed -i '/dirty/d' .bob/var.gas-mock-all-releases
+              sort -V -u -b -r -o .bob/var.gas-mock-all-releases .bob/var.gas-mock-all-releases;
+              cut -d" " -f1 .bob/var.gas-mock-all-releases | sed -n 1p > .bob/var.gas-mock-version;
+            else
+              echo "${env.GAS_VERSION}" | sed "s/+/-/;s/>/~/" > .bob/var.gas-mock-version;
+          fi'
+    - task: ha-mock-version
+      cmd: >
+        bash -c '
+          if [ "${env.HA_TYPE}" = "latest drop" ] || [ "${env.HA_TYPE}" = "latest release" ] || [ "${env.HA_VERSION}" = ">0.0.0-0" ];
+            then
+              curl -L -H "X-JFrog-Art-Api:${env.ARM_TOKEN_SELI}" ${functions.helm-drop-artifactory-ha} -o .bob/var.ha-mock-all-releases;
+              sed -i "s/[a-zA-Z]\+//g;s/< =*.*----//g;s/<.*$//g;s/.*>.*$//g;s/[.][0-9]*$//g;s/[.] *$//g;/^$/d" .bob/var.ha-mock-all-releases;
+              sed -i '/dirty/d' .bob/var.ha-mock-all-releases
+              sort -V -u -b -r -o .bob/var.ha-mock-all-releases .bob/var.ha-mock-all-releases;
+              cut -d" " -f1 .bob/var.ha-mock-all-releases | sed -n 1p > .bob/var.ha-mock-version;
+            else
+              echo "${env.HA_VERSION}" | sed "s/+/-/;s/>/~/" > .bob/var.ha-mock-version;
+          fi'
+    - task: docs-mock-version
+      cmd: >
+        bash -c '
+          if [ "${env.DOCS_VERSION}" = ">0.0.0-0" ];
+            then
+              curl -L -H "X-JFrog-Art-Api:${env.ARM_TOKEN_SELI}" ${functions.helm-drop-artifactory-docs} -o .bob/var.docs-mock-all-releases;
+              sed -ni "s/.*href=\"${functions.helm-chart-name-docs}-\([^\"]*\)\.tgz\".*/\1/p" .bob/var.docs-mock-all-releases;
+              sed -ni "/^[^[:alpha:]]*$/p" .bob/var.docs-mock-all-releases;
+              sort -V -u -b -r -o .bob/var.docs-mock-all-releases .bob/var.docs-mock-all-releases;
+              cut -d" " -f1 .bob/var.docs-mock-all-releases | sed -n 1p > .bob/var.docs-mock-version;
+            else
+              echo "${env.DOCS_VERSION}" | sed "s/+/-/;s/>/~/" > .bob/var.docs-mock-version;
+          fi
+          if [ "${var.run-type}" == "docs" ]; then
+              echo "${var.mock-doc-version-test}" > .bob/var.docs-mock-version;
+          fi'
+
+  download-gas-chart:
+    - task: prepare-image-folder
+      docker-image: adp-release-auto
+      cmd: mkdir -p .bob/${helm-chart-name-gas}-internal
+    - task: pull-latest-gas-chart
+      docker-image: k8-test
+      cmd: bash -c '
+        helm pull ${helm-chart-name-gas}
+        --version "${env.GAS_VERSION}"
+        --repo ${var.functions.gas-helm-repo}
+        --username ${env.ARM_USER_SELI}
+        --password ${env.ARM_TOKEN_SELI}
+        --destination .bob/${helm-chart-name-gas}-internal;'
+    - task: update-helm-chart-file-name
+      cmd: ls .bob/${helm-chart-name-gas}-internal > .bob/var.helm-chart-file-name
+
+  services-ip-pool-test:
+    - task: ip-test
+      docker-image: k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: ci/scripts/cluster-ip-checker.sh
+
+  prepare-dependencies-install:
+    - rule: generate-ci-chart
+    - rule: k8-cluster-prepare
+
+  install-dependencies:
+    - task: log
+      cmd: echo "Installing dep chart"
+    - task: install-dependencies-chart
+      docker-image: k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: "helm upgrade adp-gas-dependencies .bob/ci-0.0.0.tgz \
+        --namespace ${var.k8s-namespace} \
+        --wait \
+        --timeout 20m0s \
+        --reuse-values \
+        --values ${functions.mocks-config-yaml} \
+        --values ${var.additional-dependencies-chart-values-file} \
+        --set demo-ui-service-ecm.ingress.path=/domainapp-ecm-${var.k8s-namespace} \
+        --set demo-ui-service-eea.ingress.path=/domainapp-eea-${var.k8s-namespace} \
+        --set demo-ui-service-enm.ingress.path=/domainapp-enm-${var.k8s-namespace} \
+        ${var.additional-dependencies-chart-values} ${var.additional-dependencies-chart-values-ha} ${var.additional-dependencies-chart-values-uis}"
+    - task: echo-ci-installed
+      cmd: echo "CI and mocks installation completed"
+
+  install-ingress:
+    - task: install-ingress-and-dependencies
+      docker-image: k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: "helm upgrade --install adp-gas-dependencies .bob/ci-0.0.0.tgz \
+        --namespace ${var.k8s-namespace} \
+        --wait \
+        --timeout 20m0s \
+        --values ${ingress-values} \
+        --set global.pullSecret=${image-pullsecret}
+        ${var.additional-dependencies-chart-values}"
+    - task: get-loadbalancer-ip
+      docker-image: k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: >
+        bash -c '
+          if [[ $(kubectl get service eric-tm-ingress-controller-cr -n ${var.k8s-namespace} -o jsonpath="{$.status.loadBalancer.ingress[:1].ip}") ]]; then
+            kubectl get service eric-tm-ingress-controller-cr -n ${var.k8s-namespace} -o jsonpath="{$.status.loadBalancer.ingress[:1].ip}" > .bob/var.loadbalancer-ip
+          else
+            echo "Could not find loadbalancer ip"
+            exit 1
+          fi
+          '
+
+  get-hostname:
+    - task: set-hostnames
+      cmd: >
+        bash -c '
+          hostname=$(echo $(host ${var.loadbalancer-ip}) | cut -d " " -f 5 | cut -d "." -f 1)
+          echo "$hostname.seli.gic.ericsson.se" > .bob/var.hostname
+          echo "ci.gas.$hostname.seli.gic.ericsson.se" > .bob/var.ingress-hostname
+          echo "ci.ha.$hostname.seli.gic.ericsson.se" > .bob/var.ha-ingress-hostname
+          echo "ci.uis.$hostname.seli.gic.ericsson.se" > .bob/var.uis-ingress-hostname
+          echo "ci.dst.$hostname.seli.gic.ericsson.se" > .bob/var.dst-ingress-hostname
+          '
+
+  enable-mocks: # TODO: check and add uis ingress hostname and iccrIp when uis implementation finished
+    - task: set-additional-mocks-and-deps-values
+      cmd: echo -n "
+        --set ${helm-chart-name-gas-mock}-eea.ingress.hostname=${var.ingress-hostname}
+        --set ${helm-chart-name-gas-mock}-ecm.uid=${env.ARM_USER_SELI}
+        --set ${helm-chart-name-gas-mock}-eea.uid=${env.ARM_USER_SELI}
+        --set ${helm-chart-name-gas-mock}-enm.uid=${env.ARM_USER_SELI}
+        --set ${helm-chart-name-gas-mock}-ecm.ingress.iccrIP=${var.loadbalancer-ip}
+        --set ${helm-chart-name-gas-mock}-eea.ingress.iccrIP=${var.loadbalancer-ip}
+        --set ${helm-chart-name-gas-mock}-enm.ingress.iccrIP=${var.loadbalancer-ip}
+        --set ${helm-chart-name-ha-mock}-eea.uid=${env.ARM_USER_SELI}
+        --set ${helm-chart-name-ha-mock}-eea.ingress.iccrIP=${var.loadbalancer-ip}
+        --set ${functions.helm-chart-name-ha}.uid=${env.ARM_USER_SELI}
+        --set ${functions.helm-chart-name-ha}.ingress.iccrIP=${var.loadbalancer-ip}
+        --set ${helm-chart-name-ha-mock}-eea-real-doc.uid=${env.ARM_USER_SELI}
+        --set ${helm-chart-name-ha-mock}-eea-real-doc.ingress.iccrIP=${var.loadbalancer-ip}
+        --set ${helm-chart-name-ha-mock}-ecm.uid=${env.ARM_USER_SELI}
+        --set ${helm-chart-name-ha-mock}-ecm.ingress.iccrIP=${var.loadbalancer-ip}
+        --set ${helm-chart-name-docs}.uid=${env.ARM_USER_SELI}
+        --set ${helm-chart-name-docs}.ingress.iccrIP=${var.loadbalancer-ip}" >> .bob/var.additional-mocks-and-deps-chart-values
+    - task: upgrade
+      docker-image: k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: "helm upgrade adp-gas-dependencies .bob/ci-0.0.0.tgz \
+        --namespace ${var.k8s-namespace} \
+        --wait \
+        --timeout 20m0s \
+        --reuse-values \
+        --values ${mocks-enable-demo-yaml} \
+        --values ${ci-services-enable-yaml} \
+        ${var.additional-mocks-and-deps-chart-values}"
+    - task: create-uis-admin-user
+      docker-image: nodejs-builder
+      docker-flags:
+        - "--env HOSTNAME=iam.${var.ingress-hostname}"
+        - "--env REALM=${iam-realm}"
+        - "--env ADMIN_PASSWORD=${iam-admin-password}"
+        - "--env NAMESPACE=${var.k8s-namespace}"
+        - "--env CREATE_UIS_ADMIN=true"
+      cmd: >
+        bash -c '
+          if ${env.DEPLOY_IAM};
+            then
+              node ci/scripts/keycloak-rest.js
+          fi
+        '
+
+  wait-for-domain-apps-to-be-discovered:
+    - task: wait-for-domain-apps-to-be-discovered
+      docker-image: nodejs-builder
+      docker-flags:
+        - "--env AUTH_ENABLED=${env.DEPLOY_IAM}"
+        - "--env HOSTNAME=${var.ingress-hostname}"
+        - "--env PROTOCOL=${var.ingress-protocol}"
+        - "--env INGRESS_PATH=${var.ingress-iccr-path}"
+      cmd: >
+        bash -c '
+          node ci/scripts/service-checker.js \
+            demo-ui-service-ecm \
+            demo-ui-service-eea \
+            demo-ui-service-enm \
+            demo-ui-service-esma \
+            demo-ui-service-esmb \
+            demo-ui-service-esmc \
+            demo-ui-service-eui1 \
+            demo-ui-service-eui2 \
+            demo-ui-service-action-consumer \
+            demo-ui-service-action-provider \
+            demo-ui-service-3pp \
+            eric-oss-help-aggregator
+          '
+
+  generate-spin-cli-image:
+    - task: check-dockerfile-is-changed
+      cmd: echo $(git diff HEAD^ -- ${spin-cli-dockerfile-path} | wc -l) > .bob/var.spin-cli-dockerfile-changes
+    - task: build-spin-cli-image
+      cmd: >
+        bash -c '
+          if [ ${var.spin-cli-dockerfile-changes} != 0 ]; then
+              $(DOCKER_BUILDKIT=1 docker build \
+               --tag ${image-registry}/${image-drop-repo-path}/${spin-cli-image-name}:${var.version} \
+               --build-arg ARM_USER=${env.ARM_USER_SELI} \
+               --build-arg ARM_PASSWORD=${env.ARM_TOKEN_SELI} \
+               --file ${spin-cli-dockerfile-path} .)
+              $(DOCKER_BUILDKIT=1 docker build \
+               --tag ${image-registry}/${image-drop-repo-path}/${spin-cli-image-name}:latest \
+               --build-arg ARM_USER=${env.ARM_USER_SELI} \
+               --build-arg ARM_PASSWORD=${env.ARM_TOKEN_SELI} \
+               --file ${spin-cli-dockerfile-path} .)
+            else
+              echo "${spin-cli-image-name}:${var.version} image is not built as spin-cli dockerfile was not changed"
+            fi
+          '
+    - task: spin-cli-image-push-internal
+      cmd: >
+        bash -c '
+          if [ ${env.GERRIT_EVENT_TYPE} == 'change-merged'] && [ ${var.spin-cli-dockerfile-changes} != 0 ]; then
+              docker push ${image-registry}/${image-drop-repo-path}/${spin-cli-image-name}:${var.version}
+              docker push ${image-registry}/${image-drop-repo-path}/${spin-cli-image-name}:latest
+          else
+              echo "${spin-cli-image-name}:${var.version} image is not pushed to registry"
+          fi
+        '

@@ -1,0 +1,27 @@
+global:
+  networkPolicy:
+    enabled: true
+
+ingress:
+  enabled: true
+  useContour: true
+  hostname:
+  path: ""
+  ingressClass: EEA-Applications
+  adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+log:
+  streamingMethod: indirect
+
+configuration:
+  faultIndications:
+    enabled: false
+  helpAggregator:
+    enabled: true
+
+metrics:
+  enabled: false
+
+authorizationProxy:
+  enabled: false
+  adpIccrServiceName: eric-eea-ingress-ctrl-common

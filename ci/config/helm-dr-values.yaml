@@ -1,0 +1,12 @@
+# This file contains extra helm values for DR checks.
+# Can be used to enable some by default disable features, to have DR checks for those too.
+# But be aware that DR checks can set some values during tests. Those ones should not be changed here.
+
+# Don't set global variables, as it interferes with the DR checks.
+# global:
+#   security:
+#     tls:
+#       enabled: true
+
+ingress:
+  enabled: true

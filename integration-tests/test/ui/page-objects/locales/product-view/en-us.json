@@ -1,0 +1,7 @@
+{
+  "PRODUCTS": "Products",
+  "APPS": "Apps",
+  "RECENT_APPS": "Recent Apps",
+  "FAVORITE_APPS": "Favorite Apps",
+  "NO_APPS": "There are no applications configured on this cluster."
+}

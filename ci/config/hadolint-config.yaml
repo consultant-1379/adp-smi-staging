@@ -1,0 +1,19 @@
+no-fail: false # Make true to always return code 0; indicating process success; irrespective of the rule violations and failure-threshold
+format: tty #Options [tty|json|checkstyle|codeclimate|gitlab_codeclimate|codacy]
+
+# List of registries to pull images from
+trustedRegistries:
+  - armdocker.rnd.ericsson.se
+  - arm.seli.gic.ericsson.se
+
+# List of Rules to be Ignored
+ignored:
+  - DL3026 # Use only an allowed registry in the FROM image
+
+# Expected labels in the Dockerfile
+label-schema:
+  author: text
+  version: semver
+strict-labels: true # Warns of additional labels outside the schema. Make false to disable the warning.
+
+failure-threshold: error #Exit with code 1; indicating process failure; when rules with severity equal to or above threshold are violated. Options [error|warning|info|style|ignore|none]

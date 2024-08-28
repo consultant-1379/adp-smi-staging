@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bookmap PUBLIC "-//OASIS//DTD DITA 1.3 BookMap//EN" "bookmap.dtd">
+<bookmap id="owf1605778784523" xml:lang="en-US" chunk="to-content">
+    <booktitle>
+        <mainbooktitle>DITA DXP Upload Test Doc</mainbooktitle>
+        <booktitlealt outputclass="subtitle"/>
+    </booktitle>
+    <bookmeta>
+        <publisherinformation>
+            <published>
+                <organization/>
+                <completed>
+
+
+                    <year>2020</year>
+               <month>11</month>
+               <day>19</day>
+                </completed>
+            </published>
+        </publisherinformation>
+        <permissions view="ericsson_internal"/>
+        <audience othertype="all" type="other"/>
+        <category/>
+        <keywords>
+            <keyword/>
+        </keywords>
+        <bookid>
+            <edition>A</edition>
+            <booknumber>1/1551-EEA TEST6<option/>
+         </booknumber>
+        </bookid>
+        <bookchangehistory>
+            <reviewed>
+                <person value=""/>
+            </reviewed>
+            <edited value="No">
+                <person value="xmakort">Marton Kortesi</person>
+                <organization>XSN/EEA</organization>
+            </edited>
+            <approved value="Yes">
+                <person value="xmakort">Marton Kortesi</person>
+                <organization>XSN/EEA</organization>
+            </approved>
+            <bookevent>
+                <bookeventtype name="workflow_status" value="approved"/>
+            </bookevent>
+            <bookevent>
+                <bookeventtype name="changerecord"/>
+                <person value="xmakort"/>
+                <revisionid>A</revisionid>
+                <completed>
+                    <year/>
+                    <month/>
+                    <day/>
+                </completed>
+                <summary>Dummy doc for fetch error test library.</summary>
+            </bookevent>
+        </bookchangehistory>
+        <bookrights>
+            <copyrfirst>
+                <year>2020</year>
+            </copyrfirst>
+            <bookowner>
+                <organization>Ericsson AB</organization>
+            </bookowner>
+            <bookrestriction value="NA"/>
+        </bookrights>
+    </bookmeta>
+    <frontmatter>
+        <booklists>
+            <trademarklist/>
+            <toc outputclass="toc2"/>
+        </booklists>
+    </frontmatter>
+
+
+    <chapter href="topics/xeq1571257088548.dita"/>
+   <backmatter>
+        <booklists>
+            <bibliolist/>
+        </booklists>
+    </backmatter>
+    <reltable toc="no">
+
+        <relheader>
+            <relcolspec linking="sourceonly" toc="no" type="topic"/>
+            <relcolspec linking="targetonly" toc="no" type="topic"/>
+        </relheader>
+        <relrow>
+            <relcell toc="no"/>
+            <relcell toc="no"/>
+        </relrow>
+        <relrow>
+            <relcell toc="no"/>
+            <relcell toc="no"/>
+        </relrow>
+        <relrow>
+            <relcell toc="no"/>
+            <relcell toc="no"/>
+        </relrow>
+        <relrow>
+            <relcell toc="no"/>
+            <relcell toc="no"/>
+        </relrow>
+    </reltable>
+</bookmap>

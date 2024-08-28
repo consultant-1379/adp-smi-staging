@@ -1,0 +1,45 @@
+{
+  "editor.tabSize": 2,
+  "editor.formatOnType": true,
+  "editor.formatOnSave": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": ["source.fixAll.format", "source.fixAll.eslint"],
+  "markdownlint.ignore": ["bob", "**/node_modules/**"],
+  "search.exclude": {
+    "bob/": true
+  },
+  "files.trimTrailingWhitespace": true,
+  "debug.javascript.autoAttachFilter": "smart",
+  "debug.javascript.autoAttachSmartPattern": [
+    "${workspaceFolder}/**",
+    "!**/node_modules/**",
+    "**/$KNOWN_TOOLS$/**",
+    "!**/.git/**"
+  ],
+  "gitlens.remotes": [
+    { "domain": "gerrit.ericsson.se", "type": "Gerrit" },
+    { "domain": "gerritmirror.lmera.ericsson.se", "type": "Gerrit" }
+  ],
+  "gitlens.autolinks": [
+    { "prefix": "ADPRS-", "url": "https://eteamproject.internal.ericsson.com/browse/ADPRS-<num>" },
+    {
+      "prefix": "EEAEPP-",
+      "url": "https://eteamproject.internal.ericsson.com/browse/EEAEPP-<num>"
+    },
+    { "prefix": "Change-Id: ", "url": "https://gerrit.ericsson.se/q/<num>", "alphanumeric": true }
+  ],
+  "debug.onTaskErrors": "debugAnyway",
+  "mochaExplorer.env": { "NODE_ENV": "test" },
+  "rewrap.wrappingColumn": 100,
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  },
+  "vale.core.useCLI": true,
+  "[starlark]": {
+    "editor.defaultFormatter": "phgn.vscode-starlark"
+  },
+  "[groovy]": {
+    "editor.defaultFormatter": "NicolasVuillamy.vscode-groovy-lint",
+    "editor.codeActionsOnSave": ["source.fixAll"]
+  }
+}

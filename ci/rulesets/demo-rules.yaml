@@ -1,0 +1,203 @@
+modelVersion: 2.0
+import:
+  common: ../../ruleset2.0.yaml
+  functions: ../../ruleset-functions.yaml
+
+var:
+  - mock-service-iccr-value
+  - demo-loadbalancer-ip
+  - fqdn-unique-prefix
+  - ingress-hostname
+  - ha-ingress-hostname
+  - demo-pool
+
+
+properties:
+  - demo-namespace-label: demo
+  - demo-username: gas-user
+  - demo-user-password: Ericsson123!
+  - demo-drop-ip: 10.196.126.161 #TODO: only free IP must be taken for drop demo
+  - demo-release-ip: 10.196.126.162
+  - demo-drop-pool: pool-demo-drop
+  - demo-release-pool: pool-demo-release
+  - demo-default-pool: pool0
+
+env:
+  - NAMESPACE_LABEL_VALUE (default=notset)
+  - BUILD_TAG (default=proj-eea-app-local)
+  - DEMO_INGRESS_PATH (default=${env.common.BUILD_TAG})
+  - INGRESS_TLS (default=false)
+
+rules:
+  prepare-demo:
+    - rule: common.npm-install
+    - rule: common.set-repos
+    - rule: common.set-ha-version
+    - rule: common.set-uis-version
+    - rule: common.set-mock-versions
+    - rule: common.download-gas-chart
+    - rule: delete-previous-demo-namespaces
+    - rule: init-demo-ip
+    - rule: common.services-ip-pool-test
+
+  init-demo-ip:
+    - task: set-default-demo-loadbalancer-ip
+      cmd: bash -c '
+        if [ "${env.NAMESPACE_LABEL_VALUE}" = "drop" ];
+        then
+        echo -n "--set eric-tm-ingress-controller-cr.service.loadBalancerIP=${demo-drop-ip}" > .bob/var.additional-dependencies-chart-values;
+        echo -n ${demo-drop-pool} > .bob/var.demo-pool;
+        echo -n "drop" > .bob/var.fqdn-unique-prefix;
+        elif [ "${env.NAMESPACE_LABEL_VALUE}" = "release" ];
+        then
+        echo -n "--set eric-tm-ingress-controller-cr.service.loadBalancerIP=${demo-release-ip}" > .bob/var.additional-dependencies-chart-values;
+        echo -n ${demo-release-pool} > .bob/var.demo-pool;
+        echo -n "release" > .bob/var.fqdn-unique-prefix;
+        else
+        echo -n ${demo-default-pool} > .bob/var.demo-pool;
+        echo -n ${env.NAMESPACE_LABEL_VALUE} > .bob/var.fqdn-unique-prefix;
+        echo "" > .bob/var.additional-dependencies-chart-values;fi'
+    - task: add-demo-ip-pool-to-dep-chart-values
+      cmd: echo -n "
+        --set eric-tm-ingress-controller-cr.service.annotations.addressPoolName=${var.demo-pool}" >> .bob/var.additional-dependencies-chart-values
+
+  set-chart-values-demo:
+    - rule: common.get-hostname
+    - task: set-ingress-hostname-with-fixed-lb-ip # TODO: check and add ingress hostname for uis when uis implementation finished
+      cmd: >
+        bash -c '
+          echo "demo.${var.fqdn-unique-prefix}.gas.${var.common.hostname}" > .bob/var.ingress-hostname
+          echo "demo.${var.fqdn-unique-prefix}.ha.${var.common.hostname}" > .bob/var.ha-ingress-hostname
+          echo "demo.${var.fqdn-unique-prefix}.uis.${var.common.hostname}" > .bob/var.uis-ingress-hostname
+        '
+    - task: set-ingress-iccr-path # contour rewrite does not support - so need to replace with _ in the path string
+      cmd: >
+        bash -c '
+          if ${env.common.DEPLOY_IAM};
+            then
+              echo "/" > .bob/var.ingress-iccr-path
+          else
+            echo "/${env.DEMO_INGRESS_PATH}" | sed -r 's/-/_/g' > .bob/var.ingress-iccr-path
+          fi
+        '
+    - task: set-additional-values
+      cmd: echo -n "global.pullSecret=${common.image-pullsecret},ingress.hostname=${var.ingress-hostname}" > .bob/var.additional-chart-values
+    - task: set-ingress-tls
+      cmd: >
+        bash -c '
+          if (! ${env.common.DEPLOY_IAM} && ${env.INGRESS_TLS});
+            then
+              echo -n ",ingress.tls.enabled=true" >> .bob/var.additional-chart-values
+              echo -n "--set ${functions.helm-chart-name-ha}.ingress.tls.enabled=true" > .bob/var.additional-dependencies-chart-values-ha
+              echo -n "--set ${functions.helm-chart-name-uis}.ingress.tls.enabled=true" > .bob/var.additional-dependencies-chart-values-uis
+              echo "https" > .bob/var.ingress-protocol
+          elif (! ${env.common.DEPLOY_IAM});
+            then
+              echo -n ",ingress.tls.enabled=false" >> .bob/var.additional-chart-values
+              echo -n "--set ${functions.helm-chart-name-ha}.ingress.tls.enabled=false" > .bob/var.additional-dependencies-chart-values-ha
+              echo -n "--set ${functions.helm-chart-name-uis}.ingress.tls.enabled=false" > .bob/var.additional-dependencies-chart-values-uis
+              echo "http" > .bob/var.ingress-protocol
+          fi
+        '
+    - task: set-iam
+      cmd: >
+        bash -c '
+          if ${env.common.DEPLOY_IAM};
+            then
+              echo -n ",ingress.tls.enabled=true,global.security.tls.enabled=true,authorizationProxy.enabled=true,ingress.useContour=true,authorizationProxy.authnProxyFQDN=authn.iam.${var.ingress-hostname},authorizationProxy.keycloakFQDN=iam.${var.ingress-hostname},ingress.path=${var.common.ingress-iccr-path}" >> .bob/var.additional-chart-values
+              echo -n "--set ${functions.helm-chart-name-ha}.ingress.tls.enabled=true --set global.security.tls.enabled=true --set eric-data-document-database-iam.enabled=true --set eric-sec-sip-tls.enabled=true --set eric-sec-access-mgmt.enabled=true --set eric-pm-server.enabled=true --set eric-sec-access-mgmt.authenticationProxy.ingress.hostname=authn.iam.${var.ingress-hostname} --set eric-sec-access-mgmt.ingress.hostname=iam.${var.ingress-hostname} --set ${functions.helm-chart-name-ha}.authorizationProxy.authnProxyFQDN=authn.iam.${var.common.ingress-hostname} --set ${functions.helm-chart-name-ha}.authorizationProxy.keycloakFQDN=iam.${var.common.ingress-hostname}" > .bob/var.additional-dependencies-chart-values-ha
+              echo -n "--set ${functions.helm-chart-name-uis}.ingress.tls.enabled=false --set ${functions.helm-chart-name-uis}.authorizationProxy.authnProxyFQDN=authn.iam.${var.common.ingress-hostname} --set ${functions.helm-chart-name-uis}.authorizationProxy.keycloakFQDN=iam.${var.common.ingress-hostname}" > .bob/var.additional-dependencies-chart-values-uis
+              echo "https" > .bob/var.ingress-protocol
+          else
+            echo -n ",ingress.path=${var.common.ingress-iccr-path}" >> .bob/var.additional-chart-values
+          fi
+        '
+    - task: set-additional-values-file
+      cmd:
+        - echo -n "${common.demo-chart-values}" > .bob/var.additional-chart-values-file
+        - echo -n "${common.demo-ci-chart-values}" > .bob/var.additional-dependencies-chart-values-file
+    - task: set-additional-dependencies-values-ha
+      cmd: echo -n "
+        --set ${common.helm-chart-name-ha-mock}-ecm.ingress.path=/domainapp-ecm-${var.common.k8s-namespace}
+        --set ${common.helm-chart-name-ha-mock}-eea.ingress.path=/domainapp-eea-${var.common.k8s-namespace}
+        --set ${common.helm-chart-name-ha-mock}-eea-real-doc.ingress.path=/domainapp-eea-real-doc-${var.common.k8s-namespace}
+        --set ${common.helm-chart-name-ha-mock}-enm.ingress.path=/domainapp-enm-${var.common.k8s-namespace}
+        --set ${functions.helm-chart-name-ha}.ingress.hostname=${var.common.ha-ingress-hostname}
+        --set ${functions.helm-chart-name-ha}.ingress.path=/domainapp-help-aggregator-${var.common.k8s-namespace}
+        --set ${functions.helm-chart-name-docs}.ingress.path=/domainapp-docs-mock-${var.common.k8s-namespace}
+        --set ${functions.helm-chart-name-ha}.ingress.tls.existingSecret=common-ingress-external-cert" >> .bob/var.additional-dependencies-chart-values-ha
+
+    - task: set-additional-dependencies-values-uis
+      cmd:
+        - echo -n " --set ${functions.helm-chart-name-uis}.ingress.hostname=${var.common.uis-ingress-hostname}" >> .bob/var.additional-dependencies-chart-values-uis
+
+  deploy-demo:
+    - rule: common.prepare-dependencies-install
+    - rule: common.install-ingress
+    - rule: common.get-hostname
+    - rule: set-chart-values-demo
+    - rule: common.install-dependencies
+    - rule: label-demo-namespace
+    - rule: common.install-gas-and-create-iam-realm
+    - rule: common.enable-mocks
+    - rule: common.wait-for-domain-apps-to-be-discovered
+
+  delete-previous-demo-namespaces:
+    - task: delete-namespaces-with-demo-label
+      docker-image: common.k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.common.KUBECONFIG}"
+        - "--volume ${env.common.KUBECONFIG}:${env.common.KUBECONFIG}:ro"
+        - "--volume ${env.common.PWD}:${env.common.PWD}"
+      cmd:
+        - kubectl delete ns -l ${demo-namespace-label}=${env.NAMESPACE_LABEL_VALUE}
+    - task: wait-for-namespaces-cleanup # to have loadbalancer IP(s) freed up
+      cmd: >
+        bash -c 'sleep 30'
+
+  label-demo-namespace:
+    - task: set-demo-label-on-namespace
+      docker-image: common.k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.common.KUBECONFIG}"
+        - "--volume ${env.common.KUBECONFIG}:${env.common.KUBECONFIG}:ro"
+        - "--volume ${env.common.PWD}:${env.common.PWD}"
+      cmd:
+        - kubectl label ns ${var.common.k8s-namespace} ${demo-namespace-label}=${env.NAMESPACE_LABEL_VALUE}
+
+  echo-demo-ingress-url:
+    # Because of some issue GAS ignores ingressPath parameter when IAM installed.
+    # So GAS can be available only from '/' until the issue is fixed.
+    - task: save-demo-ingress-url
+      cmd: >
+        bash -c '
+          if ${env.common.DEPLOY_IAM};
+            then
+              echo ${var.common.ingress-protocol}://${var.common.ingress-hostname}/ui/#launcher > .bob/var.demo-ingress-url
+          else
+            echo ${var.common.ingress-protocol}://${var.common.ingress-hostname}${var.common.ingress-iccr-path}/ui/#launcher > .bob/var.demo-ingress-url
+          fi
+        '
+    - task: echo-demo-ingress-url
+      cmd: echo "External Ingress URL is ${var.common.demo-ingress-url}"
+    - task: iam-user-credential
+      cmd: >
+        bash -c '
+          if ${env.common.DEPLOY_IAM};
+            then
+              echo -e "Use the following user credentials for the demo: \n username: ${demo-username} \n password: ${demo-user-password}"
+          fi
+        '
+
+  test:
+    - task: test
+      cmd: >
+        bash -c '
+          if [ "latest drop" = "latest drop" ] || [ "latest drop" = "latest release" ];
+            then
+              echo true;
+            else
+              echo false;
+          fi'

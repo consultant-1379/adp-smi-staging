@@ -1,0 +1,96 @@
+def stageIsEnabled() {
+  return env.RESTORE == 'true'
+}
+pipeline {
+  agent {
+    node('presentation')
+  }
+  options {
+    ansiColor('xterm')
+    timeout(time: 1, unit: 'HOURS')
+    buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
+  }
+  parameters {
+    booleanParam(name: 'RESTORE', defaultValue: false, description: 'Restore spinnaker pipelines to the stable ones stored in the smi-staging. "RESTORE_PIPELINE" parameter must be set.')
+    string(name: 'RESTORE_PIPELINES',
+      description: 'Define the spinnaker pipeline names which should be restored as a comma separated list. "all" means to restore all pipelines.',
+      defaultValue: 'all')
+  }
+  stages {
+    stage('Clean') {
+      steps {
+        sh 'bob clean'
+      }
+    }
+    stage('Init') {
+      steps {
+          lock(resource: null, label: 'presentation-ci', quantity: 1, variable: 'system') {
+            withCredentials([
+              usernamePassword(
+                          credentialsId: 'eceaspin',
+                          usernameVariable: 'SPIN_USERNAME',
+                          passwordVariable: 'SPIN_PASSWORD'
+              ),
+            ]) {
+              ansiColor('xterm') {
+                sh 'bob -r ci/rulesets/spinnaker-rules.yaml init'
+              }
+            }
+          }
+        }
+    }
+    stage('Check configs updates') {
+      when { expression { !stageIsEnabled() } }
+      steps {
+        sh 'bob -r ci/rulesets/spinnaker-rules.yaml check-config-updates'
+      }
+    }
+    stage('Upload updates') {
+        when { expression { !stageIsEnabled() } }
+        steps {
+          lock(resource: null, label: 'presentation-ci', quantity: 1, variable: 'system') {
+            withCredentials([
+              usernamePassword(
+                          credentialsId: 'eceaspin',
+                          usernameVariable: 'SPIN_USERNAME',
+                          passwordVariable: 'SPIN_PASSWORD'
+              ),
+            ]) {
+              ansiColor('xterm') {
+                sh 'bob -r ci/rulesets/spinnaker-rules.yaml upload-updated-configs'
+              }
+            }
+          }
+        }
+      }
+    stage('Restore spinnaker pipelines') {
+        when { expression { stageIsEnabled() } }
+        steps {
+          lock(resource: null, label: 'presentation-ci', quantity: 1, variable: 'system') {
+            withCredentials([
+              usernamePassword(
+                          credentialsId: 'eceaspin',
+                          usernameVariable: 'SPIN_USERNAME',
+                          passwordVariable: 'SPIN_PASSWORD'
+              ),
+            ]) {
+              ansiColor('xterm') {
+                sh 'bob -r ci/rulesets/spinnaker-rules.yaml restore-spinnaker-pipelines'
+              }
+            }
+          }
+        }
+      }
+  }
+  post {
+    cleanup {
+      sh "docker ps -a -q --filter label=$BUILD_TAG | xargs --no-run-if-empty  docker stop"
+      sh "docker ps -a -q --filter label=$BUILD_TAG | xargs --no-run-if-empty  docker rm"
+    }
+    failure {
+      mail to: 'f98b007c.ericsson.onmicrosoft.com@emea.teams.ms',
+      subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+      body: "Failure on ${env.BUILD_URL}"
+    }
+  }
+}

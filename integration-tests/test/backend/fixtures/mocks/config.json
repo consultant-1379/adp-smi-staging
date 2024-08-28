@@ -1,0 +1,14 @@
+{
+  "apps": [
+  ],
+  "components": [
+    {
+      "name": "mock-view",
+      "module": "mock-view",
+      "version": "0.0.1",
+      "displayName": "Mock View"
+    }
+  ],
+  "groups": [
+  ]
+}

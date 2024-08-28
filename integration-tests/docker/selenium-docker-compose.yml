@@ -1,0 +1,55 @@
+version: '2.1'
+services:
+  seleniumhub:
+    container_name: docker_seleniumhub_integration_${BUILD_TAG}
+    image: armdocker.rnd.ericsson.se/dockerhub-ericsson-remote/selenium/hub:4.18.1 # update this regularly
+    shm_size: 1g
+    logging:
+      driver: 'json-file'
+    healthcheck:
+      test: ['CMD', 'true'] # disable the healthcheck
+
+  nodechrome:
+    container_name: docker_nodechrome_integration_${BUILD_TAG}
+    image: armdocker.rnd.ericsson.se/dockerhub-ericsson-remote/selenium/node-chrome:122.0 # update this regularly
+    links:
+      - seleniumhub:hub
+    depends_on:
+      - seleniumhub
+    environment:
+      - SE_EVENT_BUS_HOST=seleniumhub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    volumes:
+      - ../:/local/app
+    shm_size: 2g
+    logging:
+      driver: 'json-file'
+
+  tester:
+    container_name: docker_tester_integration_${BUILD_TAG}
+    image: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/adp-nodejs-lts-builder-image:20.12.2-0
+    command: >
+      bash -c "
+      npx wait-on --log -i 2000 -t 600000 http-get://seleniumhub:4444 &&
+      cd /local/app &&
+      npm run test:frontend:integration ;
+      TEST_STATUS=$$? ;
+      npm run test:frontend:generateReport ;
+      exit $$TEST_STATUS"
+    links:
+      - seleniumhub
+    depends_on:
+      - nodechrome
+    environment:
+      - HOSTNAME=${HOSTNAME}
+      - SELENIUM_HOST=seleniumhub
+      - SELENIUM_PORT=4444
+      - DOWNLOAD_DIRECTORY_PATH=${DOWNLOAD_PATH}
+      - TEST_MODE=mock
+    volumes:
+      - ../../:/local/app
+    shm_size: 1g
+    user: '${USER_ID}:${GROUP_ID}'
+    logging:
+      driver: 'json-file'

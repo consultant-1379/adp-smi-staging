@@ -1,0 +1,15 @@
+{
+  "singleQuote": true,
+  "trailingComma": "all",
+  "htmlWhitespaceSensitivity": "ignore",
+  "printWidth": 100,
+  "endOfLine": "auto",
+  "overrides": [
+    {
+      "files": "*.yaml",
+      "options": {
+        "singleQuote": false
+      }
+    }
+  ]
+}

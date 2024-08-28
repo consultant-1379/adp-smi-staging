@@ -1,0 +1,31 @@
+{
+  "mode": "local",
+  "exactnamespace": "",
+  "dockerRegistries": {
+    "armdocker": {
+      "url": "armdocker.rnd.ericsson.se",
+      "path": "proj-eea-dev",
+      "secretName": "arm-pullsecret",
+      "username": "ARM_USER_SELI",
+      "password": "ARM_TOKEN_SELI"
+    }
+  },
+  "namespace_prefix": "dev",
+  "kubecontext": "kubernetes-admin@dev-presentation",
+  "customK8sApiVersions": ["policy/v1/PodDisruptionBudget", "policy/v1", "batch/v1/CronJob"],
+  "additionalCiValues": [
+    "./ci/config/test-ci-chart-values.yaml",
+    "./ci/config/mocks-config.yaml",
+    "./ci/config/mocks-enable-demo.yaml"
+  ],
+  "additionalGasValues": ["./ci/config/test-chart-values.yaml"],
+  "gasImageName": "eric-adp-gui-aggregator-service",
+  "gasVersion": "2.22.0-33",
+  "gasRepo": "https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm",
+  "gasImageTempFolder": "./temp-charts",
+  "mTLS": true,
+  "enableAuthentication": true,
+  "iamUserName": "gas-user",
+  "iamUserPassword": "Ericsson123!",
+  "deployDSTServices": true
+}

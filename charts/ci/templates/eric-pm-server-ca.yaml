@@ -1,0 +1,14 @@
+{{- $global := fromJson (include "ci.global" .) -}}
+{{- if and $global.security.tls.enabled (not ((index .Values "eric-pm-server").enabled)) }}
+apiVersion: siptls.sec.ericsson.com/v1
+kind: InternalUserCA
+metadata:
+  name: eric-pm-server-ca
+spec:
+  certificate:
+    subject:
+      cn: eric-pm-server
+  kubernetes:
+    certificateName: client-cacertbundle.pem
+    generatedSecretName: eric-pm-server-ca
+{{- end }}

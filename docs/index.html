@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SMI Staging</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/npm/docsify-darklight-theme@3/dist/docsify-themeable/style.min.css"
+      type="text/css"
+    />
+    <!-- docsify-themeable styles-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css"
+      title="light"
+    />
+    <link
+      rel="stylesheet alternative"
+      href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.css"
+      title="dark"
+    />
+    <style>
+      :root {
+        --content-max-width: 95%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      // ------- Plugins -------------------------------
+      const getMarkdown = (p) => {
+        const path = /^\//g.test(p) ? p.substr(1) : p;
+        try {
+          const xhttp = new XMLHttpRequest();
+          xhttp.open('GET', path, false);
+          xhttp.send(null);
+          if (xhttp.status === 200) {
+            return xhttp.responseText;
+          }
+        } catch (e) {
+          console.error(`Failed to load ${p}.md`);
+        }
+        return `:fire: File not found {! ${p} !} :fire:`;
+      };
+      // ---- Markdown-Include like syntax to include md files
+      const installIncludeTemplatePlugin = (hook, vm) => {
+        hook.beforeEach((content) => {
+          // Template format: {!filename!}
+          const basePath = vm.route.path.split('/').slice(0, -1).join('/');
+          return content.replace(/{!([^}]*)!}/g, (_, path) => getMarkdown(`${basePath}/${path.trim()}`));
+        });
+      };
+
+      // ---- TODO add support for [TOC] as well..
+
+      // ------- docsify init -------------------------------
+      window.$docsify = {
+        // basePath: '/docs/',
+        name: 'SMI Staging',
+        nameLink: '/',
+        // repo: 'https://gerrit.ericsson.se/plugins/gitiles/EEA/adp-smi-staging',
+        loadSidebar: '_sidebar.md',
+        loadNavbar: '_navbar.md',
+        homepage: 'homepage.md',
+        onlyCover: true,
+        relativePath: true,
+        subMaxLevel: 3,
+        coverpage: '_coverpage.md',
+        auto2top: true,
+        // themeColor: '#0082f0',
+        search: 'auto', // default,
+        plugins: [installIncludeTemplatePlugin],
+      };
+    </script>
+    <!-- Docsify v4 -->
+    <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-json.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-yaml.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-powershell.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify-darklight-theme@3/dist/docsify-themeable/main.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify-darklight-theme@3/dist/docsify-themeable/index.min.js"></script>
+  </body>
+</html>

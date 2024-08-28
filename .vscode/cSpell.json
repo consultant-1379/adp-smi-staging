@@ -1,0 +1,60 @@
+// cSpell Settings
+// https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker
+{
+  // Version of the setting file.  Always 0.1
+  "version": "0.2",
+  // language - current active spelling language
+  "language": "en",
+  // words - list of words to be always considered correct
+  "words": ["embeddable"],
+  // flagWords - list of words to be always considered incorrect
+  // This is useful for offensive words and common spelling errors.
+  // For example "hte" should be "the"
+  "flagWords": ["hte"],
+  // Controls the maximum number of spelling errors per document.
+  "maxNumberOfProblems": 100,
+  // Controls the number of suggestions shown.
+  "numSuggestions": 8,
+  // The minimum length of a word before checking it against a dictionary.
+  "minWordLength": 4,
+  // Specify file types to spell check.
+  "enabledLanguageIds": [
+    "javascript",
+    "json",
+    "jsonc",
+    "markdown",
+    "plaintext",
+    "yml",
+    "yaml",
+    "toml",
+    "python",
+    "html",
+    "css",
+    "less"
+  ],
+  // Enable / Disable the spell checker.
+  "enabled": true,
+  // Display the spell checker status on the status bar.
+  "showStatus": true,
+  // Enable / Disable compound words like 'errormessage'
+  "allowCompoundWords": true,
+  // Words to be ignored and not suggested.
+  "ignoreWords": ["behaviour"],
+  // Specify paths/files to ignore.
+  "ignorePaths": [
+    "node_modules",
+    "**/node_modules",
+    "**/node_modules/**",
+    "node_modules/**",
+    "vscode-extension",
+    ".git",
+    ".cache"
+  ],
+  "dictionaryDefinitions": [
+    {
+      "name": "general_dict",
+      "path": "./dicts/general-en.txt"
+    }
+  ],
+  "dictionaries": ["general_dict"]
+}

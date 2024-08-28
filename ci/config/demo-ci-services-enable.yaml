@@ -1,0 +1,5 @@
+eric-oss-help-aggregator:
+  enabled: true
+
+eric-oss-ui-settings:
+  enabled: false

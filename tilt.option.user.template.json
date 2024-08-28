@@ -1,0 +1,10 @@
+{
+  "mode": "remote",
+  "kubecontext": "kubernetes-admin@big-presentation",
+  "customK8sApiVersions": ["policy/v1/PodDisruptionBudget", "policy/v1", "batch/v1/CronJob"],
+  "gasVersion": "2.22.0-33",
+  "gasRepo": "https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm",
+  "mTLS": true,
+  "enableAuthentication": true,
+  "deployDSTServices": true
+}

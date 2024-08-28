@@ -1,0 +1,78 @@
+pipeline {
+  agent {
+    node('presentation')
+  }
+  options {
+    ansiColor('xterm')
+    timeout(time: 2, unit: 'HOURS')
+    buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
+  }
+  stages {
+    stage('Clean') {
+      steps {
+        sh 'bob clean'
+      }
+    }
+    stage('Init') {
+      steps {
+        lock(resource: null, label: 'presentation-ci', quantity: 1, variable: 'system') {
+          withCredentials([
+            usernamePassword(credentialsId: 'arm-seli-eeaprodart-token', usernameVariable: 'ARM_USER_SELI', passwordVariable: 'ARM_TOKEN_SELI'),
+            usernamePassword(credentialsId: 'arm-sero-eeaprodart-token', usernameVariable: 'ARM_USER_SERO', passwordVariable: 'ARM_TOKEN_SERO'),
+            file(credentialsId: env.system, variable: 'KUBECONFIG')
+          ]) {
+            ansiColor('xterm') {
+              sh 'bob init-docs'
+            }
+          }
+        }
+      }
+    }
+    stage('Install npm dependencies') {
+      steps {
+        sh 'bob npm-install'
+      }
+    }
+    stage('Generate docs (temporary)') {
+      stages {
+        stage('Copy mocks') {
+          steps {
+            lock(resource: null, label: 'presentation-ci', quantity: 1, variable: 'system') {
+              withCredentials([
+                usernamePassword(credentialsId: 'arm-seli-eeaprodart-token', usernameVariable: 'ARM_USER_SELI', passwordVariable: 'ARM_TOKEN_SELI'),
+                usernamePassword(credentialsId: 'arm-sero-eeaprodart-token', usernameVariable: 'ARM_USER_SERO', passwordVariable: 'ARM_TOKEN_SERO'),
+                file(credentialsId: env.system, variable: 'KUBECONFIG')
+              ]) {
+                ansiColor('xterm') {
+                  sh 'bob -r ci/rulesets/ha-mock-ruleset.yaml copy-mocks'
+                }
+              }
+            }
+          }
+        }
+        stage('Process help content') {
+          steps {
+            lock(resource: null, label: 'presentation-ci', quantity: 1, variable: 'system') {
+              withCredentials([
+                usernamePassword(credentialsId: 'eridoc-username-password', usernameVariable: 'ERIDOC_USERNAME', passwordVariable: 'ERIDOC_PASSWORD'),
+                    usernamePassword(credentialsId: 'arm-seli-eeaprodart-token', usernameVariable: 'ARM_USER_SELI', passwordVariable: 'ARM_TOKEN_SELI'),
+                    usernamePassword(credentialsId: 'arm-sero-eeaprodart-token', usernameVariable: 'ARM_USER_SERO', passwordVariable: 'ARM_TOKEN_SERO'),
+                    file(credentialsId: env.system, variable: 'KUBECONFIG')
+              ]) {
+                ansiColor('xterm') {
+                  sh 'bob -r ci/rulesets/ha-mock-ruleset.yaml dry-run-help-content'
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  post {
+    cleanup {
+      sh "docker ps -a -q --filter label=$BUILD_TAG | xargs --no-run-if-empty  docker stop"
+      sh "docker ps -a -q --filter label=$BUILD_TAG | xargs --no-run-if-empty  docker rm"
+    }
+  }
+}

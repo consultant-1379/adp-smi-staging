@@ -1,0 +1,15 @@
+{
+  "line-length": {
+    "line_length": 100,
+    "tables": false
+  },
+  "MD033": {
+    "allowed_elements": ["table", "tr", "th", "td", "br"]
+  },
+  "MD026": {
+    "punctuation": ".,;:!"
+  },
+  "MD024": {
+    "allow_different_nesting": true
+  }
+}

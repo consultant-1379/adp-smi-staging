@@ -1,0 +1,20 @@
+{{- if .Values.global.security.tls.enabled }}
+apiVersion: siptls.sec.ericsson.com/v1
+kind: InternalCertificate
+metadata:
+  name: {{ include "domain-ui-generic.name" . }}-server-cert
+spec:
+  kubernetes:
+    generatedSecretName: {{ include "domain-ui-generic.name" . }}-server-cert
+  certificate:
+    subject:
+      cn: {{ include "domain-ui-generic.name" . }}
+    subjectAlternativeName:
+      dns:
+        - eric-tm-ingress-controller-cr
+        - {{ include "domain-ui-generic.name" . }}
+        - {{ include "domain-ui-generic.name" . }}-http
+    extendedKeyUsage:
+      tlsClientAuth: false
+      tlsServerAuth: true
+{{- end }}

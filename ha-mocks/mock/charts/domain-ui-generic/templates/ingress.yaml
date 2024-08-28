@@ -1,0 +1,43 @@
+{{- if and (.Values.ingress.enabled) (not .Values.ingress.useContour) -}}
+{{- $isApiNetworkingV1 := (.Capabilities.APIVersions.Has "networking.k8s.io/v1") -}}
+apiVersion: {{ $isApiNetworkingV1 | ternary "networking.k8s.io/v1" "networking.k8s.io/v1beta1" }}
+kind: Ingress
+metadata:
+  name: {{ include "domain-ui-generic.name" . }}-ingress
+  annotations:
+{{- if .Values.ingress.ingressClass }}
+    kubernetes.io/ingress.class: {{.Values.ingress.ingressClass }}
+{{- end }}
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+    {{- if .Values.ingress.tls.enabled }}
+      rewrite {{ .Values.ingress.path }}$ https://{{.Values.ingress.hostname}}{{ .Values.ingress.path }}/;
+    {{- else }}
+      rewrite {{ .Values.ingress.path }}$ http://{{.Values.ingress.hostname}}{{ .Values.ingress.path }}/;
+    {{ end }}
+spec:
+  {{- if .Values.ingress.tls.enabled }}
+    tls:
+      - hosts:
+          - {{ .Values.ingress.hostname | quote }}
+        secretName: {{ .Values.ingress.tls.existingSecret }}
+  {{- end }}
+    rules:
+      - host: {{ .Values.ingress.hostname | quote }}
+        http:
+          paths:
+            - path: {{ .Values.ingress.path }}(/|$)(.*)
+              {{- if $isApiNetworkingV1 }}
+              pathType: Prefix
+              {{- end }}
+              backend:
+                {{- if $isApiNetworkingV1 }}
+                service:
+                  name: {{ include "domain-ui-generic.name" . }}-http
+                  port:
+                    number: {{ .Values.service.port }}
+                {{- else }}
+                  serviceName: {{ include "domain-ui-generic.name" . }}-http
+                  servicePort: {{ .Values.service.port }}
+                {{- end }}
+{{- end -}}

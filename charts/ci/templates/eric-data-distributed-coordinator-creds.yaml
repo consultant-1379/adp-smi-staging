@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: eric-data-distributed-coordinator-creds
+type: Opaque
+data:
+  # etcd root pwd
+  etcdpasswd: {{ "password" | b64enc | quote }}

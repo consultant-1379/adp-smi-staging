@@ -1,0 +1,60 @@
+# CI Chart values to turn on every dependency.
+# It can be used as a template to create a local dev-env.
+# NOTE: For local dev-env use the minimum set of required dependencies to spare shared resources.
+
+# ---- mTLS Security and Service Mesh
+global:
+  security:
+    tls:
+      enabled: true
+  serviceMesh:
+    enabled: false # set "true" to make SM globally available for all services
+
+eric-sec-sip-tls:
+  enabled: true
+
+# ---- Log Transformer - Logging
+eric-log-transformer:
+  enabled: true
+
+# ---- Search Engine
+eric-data-search-engine:
+  enabled: true
+
+# ---- Performance Measurement Server (Prometheus)
+eric-pm-server:
+  enabled: true
+
+# ---- IAM - Authentication and Authorization
+eric-data-document-database-iam:
+  enabled: true
+
+# update signum with your signum, and IP to ICCR IP
+eric-sec-access-mgmt:
+  enabled: true
+  authenticationProxy:
+    ingress:
+      hostname: <signum>.authn.<ingress-hostname>
+  ingress:
+    hostname: <signum>.iam.<ingress-hostname>
+
+# ---- Fault Handling
+# FM alarm handler requires the list of fault mappings as a config map. GAS Provides a fault map, but if the CI chart is deployed on its own
+# then set it to an empty config map.
+eric-fh-alarm-handler:
+  enabled: true
+  alarmhandler:
+    configmap:
+      faultmappings: empty-faultmappings-configmap # Overridden. If GAS is deployed, this can be removed.
+
+eric-data-document-database-fault-handling:
+  enabled: true
+
+# ---- Service Mesh
+# control pane Pod of Service Mesh, required for sidecar injection, traffic management, service discovery etc.
+eric-mesh-controller:
+  enabled: false # must be "true" if you need Service Mesh
+
+# data plane Pod of Service Mesh, required for ingress, routing and load balancing functionality
+eric-mesh-gateways:
+  enabled: false # must be "true" if you need Service Mesh

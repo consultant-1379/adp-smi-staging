@@ -1,0 +1,102 @@
+modelVersion: 2.0
+import:
+  common: ../../ruleset2.0.yaml
+  functions: ../../ruleset-functions.yaml
+
+var:
+  - version
+  - ingress-iccr-path
+  - k8s-namespace
+
+properties:
+  - test-ci-services-enable-yaml: ci/config/test-ci-services-enable.yaml
+
+rules:
+  run-integration-tests:
+    - rule: integration-tests-in-cluster-backend
+    - rule: integration-tests-in-cluster-frontend
+
+  deploy-gas-ha-and-ci:
+    - rule: common.set-repos
+    - rule: common.set-ha-version
+    - rule: common.set-uis-version
+    - rule: common.set-mock-versions
+    - task: convert-iccr-path
+      cmd: echo "" > .bob/var.ingress-iccr-path
+    - rule: common.download-gas-chart
+    - rule: common.services-ip-pool-test
+    - rule: common.prepare-dependencies-install
+    - rule: common.install-ingress
+    - rule: common.get-hostname
+    - rule: set-chart-values-drop
+    - rule: common.install-dependencies
+    - rule: common.install-gas-and-create-iam-realm
+    - rule: common.enable-mocks
+      properties:
+        - ci-services-enable-yaml: ${test-ci-services-enable-yaml}
+    - rule: common.wait-for-domain-apps-to-be-discovered
+
+  set-chart-values-drop:
+    - task: set-additional-values
+      cmd:
+        - echo -n "global.security.tls.enabled=true,global.pullSecret=${common.image-pullsecret},uiconfig.uiSettings.baseUrl=https://${var.common.uis-ingress-hostname}" > .bob/var.additional-chart-values
+        - echo -n "https" > .bob/var.ingress-protocol
+    - task: add-hostname-to-additional-values
+      cmd:
+        - echo -n ",ingress.hostname=${var.common.ingress-hostname},authorizationProxy.authnProxyFQDN=authn.iam.${var.common.ingress-hostname},authorizationProxy.keycloakFQDN=iam.${var.common.ingress-hostname}" >> .bob/var.additional-chart-values
+        - echo -n "
+          --set eric-sec-access-mgmt.authenticationProxy.ingress.hostname=authn.iam.${var.common.ingress-hostname}
+          --set eric-sec-access-mgmt.ingress.hostname=iam.${var.common.ingress-hostname}" > .bob/var.additional-dependencies-chart-values
+    - task: set-additional-values-file
+      cmd:
+        - echo "${common.test-chart-values}" > .bob/var.additional-chart-values-file
+        - echo -n "${common.test-ci-chart-values}" > .bob/var.additional-dependencies-chart-values-file
+    - task: set-additional-dependencies-values-ha
+      cmd: echo -n "
+        --set ${common.helm-chart-name-ha-mock}-ecm.ingress.path=/domainapp-ecm-${var.common.k8s-namespace}
+        --set ${common.helm-chart-name-ha-mock}-eea.ingress.path=/domainapp-eea-${var.common.k8s-namespace}
+        --set ${common.helm-chart-name-ha-mock}-eea-real-doc.ingress.path=/domainapp-eea-real-doc-${var.common.k8s-namespace}
+        --set ${common.helm-chart-name-ha-mock}-enm.ingress.path=/domainapp-enm-${var.common.k8s-namespace}
+        --set ${functions.helm-chart-name-ha}.ingress.hostname=${var.common.ha-ingress-hostname}
+        --set ${functions.helm-chart-name-ha}.authorizationProxy.authnProxyFQDN=authn.iam.${var.common.ingress-hostname}
+        --set ${functions.helm-chart-name-ha}.authorizationProxy.keycloakFQDN=iam.${var.common.ingress-hostname}
+        --set ${functions.helm-chart-name-docs}.ingress.path=/domainapp-docs-mock-${var.common.k8s-namespace}" > .bob/var.additional-dependencies-chart-values-ha
+    - task: set-additional-dependencies-values-uis
+      cmd:
+        - echo -n "
+          --set ${functions.helm-chart-name-uis}.ingress.hostname=${var.common.uis-ingress-hostname}
+          --set ${functions.helm-chart-name-uis}.authorizationProxy.authnProxyFQDN=authn.iam.${var.common.ingress-hostname}
+          --set ${functions.helm-chart-name-uis}.authorizationProxy.keycloakFQDN=iam.${var.common.ingress-hostname}" > .bob/var.additional-dependencies-chart-values-uis
+    - task: set-additional-dependencies-values-dst
+      cmd:
+        - echo -n "--set ${common.helm-chart-name-dst-query}.ingress.hostname=${var.common.dst-ingress-hostname}" > .bob/var.additional-mocks-and-deps-chart-values
+
+  integration-tests-in-cluster-frontend:
+    - task: start-kubernetes-frontend-integration-tests
+      cmd: bash -c '
+        export USER_ID=$(id -u);
+        export GROUP_ID=$(id -g);
+        export HOSTNAME=${var.common.ingress-hostname};
+        EXIT_CODE=1;
+        TRIES=3;
+        while [[ $EXIT_CODE -ne 0 ]] && [[ $EXIT_CODE -ne 2 ]] && [[ $TRIES -gt 0 ]];
+        do
+        echo "Running Selenium test. $TRIES attempts left";
+        docker-compose --project-name frontend_e2e_${env.common.BUILD_TAG} --file integration-tests/docker/selenium-docker-compose.yml up --abort-on-container-exit --exit-code-from tester;
+        EXIT_CODE=$$?;
+        ((TRIES--));
+        docker-compose --project-name frontend_e2e_${env.common.BUILD_TAG} --file integration-tests/docker/selenium-docker-compose.yml down -v;
+        done;
+        exit $EXIT_CODE'
+
+  integration-tests-in-cluster-backend:
+    - task: start-kubernetes-backend-integration-tests
+      docker-image: common.nodejs-builder
+      docker-flags:
+        - "--env HOSTNAME=${var.common.ingress-hostname}"
+        - "--env DST_HOSTNAME=${var.common.dst-ingress-hostname}"
+        - "--env UIS_HOSTNAME=${var.common.uis-ingress-hostname}"
+        - "--env HA_VERSION=${var.functions.ha-mock-version}"
+        - "--env K8S_NAMESPACE=${var.common.k8s-namespace}"
+      cmd:
+        - npm run test:backend:integration

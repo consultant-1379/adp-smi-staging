@@ -1,0 +1,213 @@
+apiVersion: v2
+appVersion: 0.0.0
+description: For cluster integration testing and for future staging content
+name: ci
+version: 0.0.0
+dependencies:
+  - condition: eric-log-transformer.enabled
+    name: eric-log-transformer
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-data-search-engine.enabled
+    name: eric-data-search-engine
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-sec-sip-tls.enabled
+    name: eric-sec-key-management
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-sec-sip-tls.enabled
+    name: eric-sec-sip-tls
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-sec-sip-tls.enabled
+    name: eric-data-distributed-coordinator-ed
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-pm-server.enabled
+    name: eric-pm-server
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-fh-alarm-handler.enabled
+    name: eric-data-message-bus-kf
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-fh-alarm-handler.enabled
+    name: eric-data-coordinator-zk
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-data-document-database-fault-handling.enabled
+    name: eric-data-document-database-pg
+    alias: eric-data-document-database-fault-handling
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-data-document-database-iam.enabled
+    name: eric-data-document-database-pg
+    alias: eric-data-document-database-iam
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-data-document-database-pg.enabled
+    name: eric-data-document-database-pg
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-sec-access-mgmt.enabled
+    name: eric-sec-access-mgmt
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-fh-alarm-handler.enabled
+    name: eric-fh-alarm-handler
+    repository: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-tm-ingress-controller-cr.enabled
+    name: eric-tm-ingress-controller-cr
+    repository: https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: ~0.0.0
+
+  - condition: eric-mesh-controller.enabled
+    name: eric-mesh-controller
+    repository: https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: 9.2.0+1
+
+  - condition: eric-mesh-gateways.enabled
+    alias: service-mesh-ingress-gateway
+    name: eric-mesh-gateways
+    repository: https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm
+    version: 9.2.0+1
+
+  - condition: eric-cnom-server.enabled
+    name: eric-cnom-server
+    repository: https://arm.sero.gic.ericsson.se/artifactory/proj-pc-rs-released-helm
+    version: ~0.0.0
+
+  - condition: eric-dst-collector.enabled
+    name: eric-dst-collector
+    repository: https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm/
+    version: ~0.0.0
+
+  - condition: eric-dst-query.enabled
+    name: eric-dst-query
+    repository: https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm/
+    version: ~0.0.0
+
+  # Note: the version of demo service charts are replaced in the CI to exact versions.
+  # To make the regexp work, always have the 'name' before the 'version'
+
+  - condition: demo-ui-service-ecm.enabled
+    name: domain-ui-generic
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: demo-ui-service-ecm
+    version: ~0.0.0-0
+
+  - condition: demo-ui-service-eea.enabled
+    name: domain-ui-generic
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: demo-ui-service-eea
+    version: ~0.0.0-0
+
+  - condition: demo-ui-service-enm.enabled
+    name: domain-ui-generic
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: demo-ui-service-enm
+    version: ~0.0.0-0
+
+  - condition: demo-ui-service-esma.enabled
+    name: domain-ui-generic
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: demo-ui-service-esma
+    version: ~0.0.0-0
+
+  - condition: demo-ui-service-esmb.enabled
+    name: domain-ui-generic
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: demo-ui-service-esmb
+    version: ~0.0.0-0
+
+  - condition: demo-ui-service-esmc.enabled
+    name: domain-ui-generic
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: demo-ui-service-esmc
+    version: ~0.0.0-0
+
+  - condition: demo-ui-service-eui1.enabled
+    name: domain-ui-generic
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: demo-ui-service-eui1
+    version: ~0.0.0-0
+
+  - condition: demo-ui-service-eui2.enabled
+    name: domain-ui-generic
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: demo-ui-service-eui2
+    version: ~0.0.0-0
+
+  - condition: demo-ui-service-3pp.enabled
+    name: domain-ui-generic
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: demo-ui-service-3pp
+    version: ~0.0.0-0
+
+  - condition: demo-ui-service-tree.enabled
+    name: domain-ui-generic
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: demo-ui-service-tree
+    version: ~0.0.0-0
+
+  - condition: demo-ui-service-action-consumer.enabled
+    name: domain-ui-generic
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: demo-ui-service-action-consumer
+    version: ~0.0.0-0
+
+  - condition: demo-ui-service-action-provider.enabled
+    name: domain-ui-generic
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: demo-ui-service-action-provider
+    version: ~0.0.0-0
+
+  - condition: eric-oss-help-aggregator.enabled
+    name: eric-oss-help-aggregator
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: eric-oss-help-aggregator
+    version: ~0.0.0-0
+
+  - condition: eric-oss-ui-settings.enabled
+    name: eric-oss-ui-settings
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: eric-oss-ui-settings
+    version: ~0.0.0-0
+
+  - condition: help-center-mock-eea.enabled
+    name: domain-ui-generic-oss-helper
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: help-center-mock-eea
+    version: ~0.0.0-0
+
+  - condition: help-center-mock-ecm.enabled
+    name: domain-ui-generic-oss-helper
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: help-center-mock-ecm
+    version: ~0.0.0-0
+
+  - condition: help-center-mock-eea-real-doc.enabled
+    name: domain-ui-generic-oss-helper
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    alias: help-center-mock-eea-real-doc
+    version: ~0.0.0-0
+
+  - condition: help-center-docs-mock.enabled
+    name: help-center-docs-mock
+    repository: https://arm.seli.gic.ericsson.se/artifactory/proj-eea-drop-helm
+    version: ~0.0.0-0

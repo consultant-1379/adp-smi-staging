@@ -1,0 +1,19 @@
+{
+  "extends": "recommended-jenkinsfile",
+  "rules": {
+    "DuplicateMapLiteral": "off",
+    "DuplicateStringLiteral": {
+      "enabled": false
+    },
+    "LineLength": {
+      "length": 200
+    },
+    "NestedBlockDepth": {
+      "maxNestedBlockDepth": 15
+    },
+    "Indentation": {
+      "severity": "error",
+      "spacesPerIndentLevel": 2
+    }
+  }
+}

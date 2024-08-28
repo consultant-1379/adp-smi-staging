@@ -1,0 +1,10 @@
+{
+  "OTHERS": "Others",
+  "ALPHABETICAL": "A-Z",
+  "TILES": "Tiles",
+  "NO_APPS": "There are no applications configured on this cluster.",
+  "NO_APPS_FOR_PRODUCT": "There are no applications configured for this product.",
+  "NO_FAVORITE_APPS": "None of the applications is marked as favorite.",
+  "VIEW_ALL": "View all Documents",
+  "ADMINISTRATIVE_GUIDE": "Administration Guides"
+}

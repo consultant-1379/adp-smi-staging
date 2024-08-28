@@ -1,0 +1,350 @@
+global:
+  security:
+    tls:
+      enabled: true
+  serviceMesh:
+    enabled: false
+  networkPolicy:
+    enabled: true
+
+#NEED FOR TLS
+eric-sec-sip-tls:
+  enabled: true
+
+eric-log-transformer:
+  enabled: false
+  config:
+    adpJson:
+      transformation:
+        enabled: true
+  searchengine:
+    logplaneConfig:
+      - field: "[facility]"
+        value: "log audit"
+        newLogplane: "eric-adp-gas-auditlog"
+  syslog:
+    syslogLogplane: "eric-adp-gui-aggregator-service"
+  service:
+    endpoints:
+      syslogIn:
+        tls:
+          enforced: required
+
+eric-data-search-engine:
+  enabled: false
+  autoSetRequiredWorkerNodeSysctl: true
+  data:
+    storageAllocation: 1Gi
+  persistence:
+    storageClass: ""
+  service:
+    endpoints:
+      rest:
+        tls:
+          verifyClientCertificate: optional
+
+#NEED FOR TLS
+eric-data-distributed-coordinator-ed:
+  pods:
+    dced:
+      replicas: 1
+  persistence:
+    persistentVolumeClaim:
+      storageClassName: ""
+
+eric-sec-key-management:
+  persistence:
+    type: pvc
+    pvc:
+      storageClassName: ""
+
+eric-pm-server:
+  enabled: false
+  rbac:
+    appMonitoring:
+      configFileCreate: true
+      enabled: true
+  server:
+    persistentVolume:
+      enabled: true
+      size: 1Gi
+      storageClass: ""
+
+demo-ui-service-ecm:
+  enabled: false
+  publicPath: ui-generic-ecm
+  contextRoot: # it is empty to test this case as well
+
+demo-ui-service-eea:
+  enabled: false
+  publicPath: ui-generic-eea
+  contextRoot: /ui
+
+demo-ui-service-enm:
+  enabled: false
+  publicPath: ui-generic-enm
+  contextRoot: /some-path
+
+demo-ui-service-esma:
+  enabled: false
+  publicPath: esm-container
+  contextRoot: /other-path
+
+demo-ui-service-esmb:
+  enabled: false
+  publicPath: esm-service-1
+  contextRoot: /ui
+
+demo-ui-service-esmc:
+  enabled: false
+  publicPath: esm-service-2
+
+demo-ui-service-eui1:
+  enabled: false
+  publicPath: e-ui-app-1
+
+demo-ui-service-eui2:
+  enabled: false
+  publicPath: e-ui-app-2
+
+demo-ui-service-3pp:
+  enabled: false
+  publicPath: third-party-app
+
+demo-ui-service-tree:
+  enabled: false
+  publicPath: e-ui-tree-apps
+
+demo-ui-service-action-consumer:
+  enabled: false
+  publicPath: action-consumer
+
+demo-ui-service-action-provider:
+  enabled: false
+  publicPath: action-provider
+
+# HA Main Service
+eric-oss-help-aggregator:
+  enabled: false
+
+# UIS Main Service
+eric-oss-ui-settings:
+  enabled: false
+
+# HA Mocks
+help-center-mock-eea:
+  enabled: false
+  publicPath: help-center-mock-eea
+  contextRoot: ui
+
+help-center-mock-eea-real-doc:
+  enabled: false
+  publicPath: help-center-mock-eea-real-doc
+  contextRoot: overview
+
+help-center-mock-ecm:
+  enabled: false
+  publicPath: help-center-mock-ecm
+  contextRoot: some-path
+
+help-center-docs-mock:
+  enabled: false
+  publicPath: help-center-docs-mock
+  contextRoot: docs-mock
+
+# IAM
+eric-data-document-database-iam:
+  enabled: false
+  postgresDatabase: iam
+  credentials:
+    kubernetesSecretName: eric-eea-iam-pg-usersecrets
+
+# Fault Handling Service
+eric-data-document-database-fault-handling:
+  enabled: false
+  backend:
+    dbname: gas
+  postgresDatabase: gas
+  credentials:
+    kubernetesSecretName: eric-eea-iam-pg-usersecrets
+
+eric-sec-access-mgmt:
+  enabled: false
+  authenticationProxy:
+    enabled: true
+    lastlogintimeEnabled: true
+    cookieDomain: ericsson.se
+    logoutpageEnabled: true
+    ingress:
+      enabled: true
+      hostname: # authn.iam.ci.gas.<ingress-hostname>
+      existingTlsSecret: eric-adp-gui-aggregator-service-ingress-external-server-cert
+      ingressClass: EEA-Applications
+      caCertificateSecret: eric-eea-ingress-ctrl-common-client-ca
+  ingress:
+    enabled: true
+    iccrServiceName: eric-tm-ingress-controller-cr
+    hostname: # iam.ci.gas.<ingress-hostname>
+    ingressClass: EEA-Applications
+    caCertificateSecret: eric-eea-ingress-ctrl-common-client-ca
+    tls:
+      enabled: true
+      passthrough: false
+      existingSecret: eric-adp-gui-aggregator-service-ingress-external-server-cert
+  statefulset:
+    adminSecret: eric-eea-iam-pg-usersecrets
+  persistence:
+    dbsecret: eric-eea-iam-pg-usersecrets
+    dbUserkey: custom-user
+    dbPasswdkey: custom-pwd
+    dbName: iam
+    dbHost: eric-data-document-database-iam
+  service:
+    endpoints:
+      iam:
+        tls:
+          verifyClientCertificate: optional
+      authenticationproxy:
+        tls:
+          verifyClientCertificate: optional
+  tls:
+    client:
+      pg:
+        issuer: eric-data-document-database-iam-client-ca
+
+eric-fh-alarm-handler:
+  enabled: false
+  service:
+    endpoints:
+      restapi:
+        tls:
+          enforced: required
+          verifyClientCertificate: optional
+  alarmhandler:
+    configmap:
+      faultmappings: eric-adp-gui-aggregator-service-faultmappings-configmap
+    rest:
+      fi:
+        api:
+          enabled: true
+  credentials:
+    kubernetesSecretName: eric-eea-iam-pg-usersecrets
+  backend:
+    dbname: gas
+    hostname: eric-data-document-database-fault-handling
+
+eric-data-message-bus-kf:
+  enabled: false
+  service:
+    endpoints:
+      messagebuskf:
+        tls:
+          enforced: required
+
+eric-tm-ingress-controller-cr:
+  enabled: true
+  fullnameOverride: eric-tm-ingress-controller-cr
+  rbac:
+    create: true
+  service:
+    externalTrafficPolicy: Local
+    annotations:
+      sharedVIPLabel: null
+      addressPoolName: pool0
+      cloudProviderLB: {}
+  ingressClass: EEA-Applications
+  clientCertificate:
+    enabled: true
+    secret: eric-tm-ingress-controller-cr-internal-client-cert
+  resources:
+    contour:
+      limits:
+        cpu: 150m # 75m delivered by ms
+        memory: 800Mi
+    envoy:
+      limits:
+        cpu: 1
+        memory: 600Mi
+  metrics:
+    enabled: false
+  contour:
+    namespaceBound: true
+
+eric-mesh-controller:
+  enabled: false
+
+eric-mesh-gateways:
+  enabled: false
+
+# CNOM
+eric-cnom-server:
+  enabled: false
+  ingress:
+    enabled: true
+    hostname:
+  documentDatabasePg:
+    enabled: false
+  documentDatabase:
+    enabled: false
+  authentication:
+    enabled: false
+  pmServer:
+    tls:
+      enabled: false
+    host: eric-pm-server
+  alarmHandler:
+    tls:
+      enabled: false
+  searchEngine:
+    tls:
+      enabled: false
+
+# Distributed Trace services
+eric-dst-collector:
+  enabled: false
+  service:
+    endpoints:
+      rest:
+        tls:
+          verifyClientCertificate: optional
+      clientOtlpHttp:
+        tls:
+          verifyClientCertificate: optional
+      clientJaeger:
+        tls:
+          verifyClientCertificate: optional
+
+eric-dst-query:
+  enabled: false
+  ingress:
+    enabled: true
+    useContour: true
+    hostname: localhost
+    ingressClass: EEA-Applications
+    tls:
+      enabled: false
+      existingSecret: common-ingress-external-cert
+  iccr:
+    enabled: "true" # Configuration parameter to enable/disable the ICCR CA
+    name: eric-eea-ingress-ctrl-common # name of the deployed ICCR instance
+  service:
+    endpoints:
+      http:
+        tls:
+          verifyClientCertificate: optional
+
+eric-data-document-database-pg:
+  enabled: true
+  metrics:
+    enabled: false
+  credentials:
+    kubernetesSecretName: eric-data-document-database-pg-usersecrets
+  postgresDatabase: ui-settings
+  persistentVolumeClaim:
+    enabled: true
+    housekeeping_threshold: 90
+  service:
+    endpoints:
+      postgres:
+        tls:
+          enforced: required

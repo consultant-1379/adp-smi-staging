@@ -1,0 +1,2183 @@
+{
+  "schema-version": "1.0.0",
+  "packages": [
+    {
+      "name": "eea-documentation",
+      "version": "0.0.1",
+      "packageDescription": "EEA Documentation",
+      "path": "/eea-documentation/relative/path/to",
+      "type": "zip",
+      "sourceDocuments": [
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/19810-AVA90159UEN",
+            "revision": "M"
+          },
+          "metadata": {
+            "displayName": "Interface Descriptions",
+            "descriptionLong": "Long Interface Descriptions",
+            "descriptionShort": "Short Interface Descriptions",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_interface"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "2/1543-AVA90159UEN",
+            "revision": "L"
+          },
+          "metadata": {
+            "displayName": "Scaling Guide",
+            "descriptionLong": "Long Scaling Guide",
+            "descriptionShort": "Short Scaling Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_dimensioning",
+              "eea_planning_and_dimensioning"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "7/1551-AVA90159UEN",
+            "revision": "D"
+          },
+          "metadata": {
+            "displayName": "Data Cubes and Database Tables Reference",
+            "descriptionLong": "Long Data Cubes and Database Tables Reference",
+            "descriptionShort": "Short Data Cubes and Database Tables Reference",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_data_models"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/15519-AVA90159UEN",
+            "revision": "S"
+          },
+          "metadata": {
+            "displayName": "External System Integration Guide",
+            "descriptionLong": "Long External System Integration Guide",
+            "descriptionShort": "Short External System Integration Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_system_integration_and_configuration",
+              "eea_system_integration_and_configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "6/1551-AVA90159UEN",
+            "revision": "H"
+          },
+          "metadata": {
+            "displayName": "Dimensioning Guide",
+            "descriptionLong": "Long Dimensioning Guide",
+            "descriptionShort": "Short Dimensioning Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_dimensioning",
+              "eea_planning_and_dimensioning"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "0962-AVA90159UEN",
+            "revision": "K"
+          },
+          "metadata": {
+            "displayName": "Free and Open Source Software",
+            "descriptionLong": "Long Free and Open Source Software",
+            "descriptionShort": "Short Free and Open Source Software",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_library_overview"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/10948-AVA90159UEN",
+            "revision": "U"
+          },
+          "metadata": {
+            "displayName": "Network Impact Report",
+            "descriptionLong": "Long Network Impact Report",
+            "descriptionShort": "Short Network Impact Report",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_planning",
+              "eea_planning_and_dimensioning"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "50/1531-AVA90159UEN",
+            "revision": "E"
+          },
+          "metadata": {
+            "displayName": "Installation and Initial Configuration Guide for Distributed Setup",
+            "descriptionLong": "Long Installation and Initial Configuration Guide for Distributed Setup",
+            "descriptionShort": "Short Installation and Initial Configuration Guide for Distributed Setup",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_distributed_setup",
+              "eea_installation"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1553-LXA1191929UEN",
+            "revision": "S"
+          },
+          "metadata": {
+            "displayName": "How to Get Started with Ericsson Library Explorer",
+            "descriptionLong": "Long How to Get Started with Ericsson Library Explorer",
+            "descriptionShort": "Short How to Get Started with Ericsson Library Explorer",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_library_explorer"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "3/1553-AVA90159UEN",
+            "revision": "J"
+          },
+          "metadata": {
+            "displayName": "Hardening Guideline",
+            "descriptionLong": "Long Hardening Guideline",
+            "descriptionShort": "Short Hardening Guideline",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_security_information",
+              "eea_security_management"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "3/1543-AVA90159UEN",
+            "revision": "S"
+          },
+          "metadata": {
+            "displayName": "Alarm Operating Instructions",
+            "descriptionLong": "Long Alarm Operating Instructions",
+            "descriptionShort": "Short Alarm Operating Instructions",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_fault_management",
+              "eea_troubleshooting_information"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1553-AVA90159UEN",
+            "revision": "U"
+          },
+          "metadata": {
+            "displayName": "Dashboard User Guide",
+            "descriptionLong": "Long Dashboard User Guide",
+            "descriptionShort": "Short Dashboard User Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_user_interface_guides"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "2/1553-AVA90159UEN",
+            "revision": "T"
+          },
+          "metadata": {
+            "displayName": "Security User Guide",
+            "descriptionLong": "Long Security User Guide",
+            "descriptionShort": "Short Security User Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_security_information",
+              "eea_security_management"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "6/1553-AVA90159UEN",
+            "revision": "D"
+          },
+          "metadata": {
+            "displayName": "Privacy User Guide",
+            "descriptionLong": "Long Privacy User Guide",
+            "descriptionShort": "Short Privacy User Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_security_information",
+              "eea_security_management"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "2/1551-AVA90159UEN",
+            "revision": "V"
+          },
+          "metadata": {
+            "displayName": "Architecture Description",
+            "descriptionLong": "Long Architecture Description",
+            "descriptionShort": "Short Architecture Description",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_system_integration_and_configuration",
+              "eea_system_integration_and_configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1551-EN/LZN7030318UEN",
+            "revision": "J"
+          },
+          "metadata": {
+            "displayName": "Library Overview",
+            "descriptionLong": "Long Library Overview",
+            "descriptionShort": "Short Library Overview",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_library_overview"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "4/1553-AVA90159UEN",
+            "revision": "E"
+          },
+          "metadata": {
+            "displayName": "Administrator Guide",
+            "descriptionLong": "Long Administrator Guide",
+            "descriptionShort": "Short Administrator Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_configuration_information",
+              "eea_configuration_management"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "3/15372-AVA90159UEN",
+            "revision": "K"
+          },
+          "metadata": {
+            "displayName": "Upgrade Instructions",
+            "descriptionLong": "Long Upgrade Instructions",
+            "descriptionShort": "Short Upgrade Instructions",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_upgrade",
+              "eea_installation"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1531-AVA90159UEN",
+            "revision": "X"
+          },
+          "metadata": {
+            "displayName": "Installation and Initial Configuration Guide",
+            "descriptionLong": "Long Installation and Initial Configuration Guide",
+            "descriptionShort": "Short Installation and Initial Configuration Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_installation",
+              "eea_installation"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "5/1551-AVA90159UEN",
+            "revision": "J"
+          },
+          "metadata": {
+            "displayName": "Reference Data Description",
+            "descriptionLong": "Long Reference Data Description",
+            "descriptionShort": "Short Reference Data Description",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_provisioning"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1543-AVA90159UEN",
+            "revision": "M"
+          },
+          "metadata": {
+            "displayName": "Health Check Instruction",
+            "descriptionLong": "Long Health Check Instruction",
+            "descriptionShort": "Short Health Check Instruction",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_fault_management",
+              "eea_troubleshooting_information"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "5/1543-AVA90159UEN",
+            "revision": "D"
+          },
+          "metadata": {
+            "displayName": "Backup and Restore",
+            "descriptionLong": "Long Backup and Restore",
+            "descriptionShort": "Short Backup and Restore",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_configuration_information",
+              "eea_configuration_management"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1551-EN/LZN7030319UEN",
+            "revision": "J"
+          },
+          "metadata": {
+            "displayName": "Library Overview",
+            "descriptionLong": "Long Library Overview",
+            "descriptionShort": "Short Library Overview",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_library_overview"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "3/1551-AVA90159UEN",
+            "revision": "S"
+          },
+          "metadata": {
+            "displayName": "Performance Management",
+            "descriptionLong": "Long Performance Management",
+            "descriptionShort": "Short Performance Management",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_performance_information",
+              "eea_performance_management"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "4/1551-AVA90159UEN",
+            "revision": "G"
+          },
+          "metadata": {
+            "displayName": "Fault Management",
+            "descriptionLong": "Long Fault Management",
+            "descriptionShort": "Short Fault Management",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_fault_management",
+              "eea_troubleshooting_information"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "6/1543-AVA90159UEN",
+            "revision": "B"
+          },
+          "metadata": {
+            "displayName": "Emergency Recovery Procedure",
+            "descriptionLong": "Long Emergency Recovery Procedure",
+            "descriptionShort": "Short Emergency Recovery Procedure",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_fault_management",
+              "eea_troubleshooting_information"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "4/1543-AVA90159UEN",
+            "revision": "G"
+          },
+          "metadata": {
+            "displayName": "Data Collection Guide",
+            "descriptionLong": "Long Data Collection Guide",
+            "descriptionShort": "Short Data Collection Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_data_collection_information",
+              "eea_troubleshooting_information"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "00651-AVA90159UEN",
+            "revision": "H"
+          },
+          "metadata": {
+            "displayName": "Trademark Information",
+            "descriptionLong": "Long Trademark Information",
+            "descriptionShort": "Short Trademark Information",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_library_overview"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "5/1553-AVA90159UEN",
+            "revision": "T"
+          },
+          "metadata": {
+            "displayName": "Configuration Guide",
+            "descriptionLong": "Long Configuration Guide",
+            "descriptionShort": "Short Configuration Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_configuration_information",
+              "eea_configuration_management"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "51/15372-AVA90159UEN",
+            "revision": "B"
+          },
+          "metadata": {
+            "displayName": "Upgrade Instructions for Distributed Setup",
+            "descriptionLong": "Long Upgrade Instructions for Distributed Setup",
+            "descriptionShort": "Short Upgrade Instructions for Distributed Setup",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_distributed_setup",
+              "eea_installation"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/22102-AVA90159UEN",
+            "revision": "V"
+          },
+          "metadata": {
+            "displayName": "Expert Analytics",
+            "descriptionLong": "Long Expert Analytics",
+            "descriptionShort": "Short Expert Analytics",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_product_overview"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/19810-AVA90159-S1UEN",
+            "revision": "M"
+          },
+          "metadata": {
+            "displayName": "Interface Descriptions",
+            "descriptionLong": "Long Interface Descriptions",
+            "descriptionShort": "Short Interface Descriptions",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_interface"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/15451-AVA90159UEN",
+            "revision": "T"
+          },
+          "metadata": {
+            "displayName": "Troubleshooting Guideline",
+            "descriptionLong": "Long Troubleshooting Guideline",
+            "descriptionShort": "Short Troubleshooting Guideline",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eea-docs",
+              "eea_fault_management",
+              "eea_troubleshooting_information"
+            ]
+          }
+        }
+      ],
+      "groups": [
+        {
+          "name": "eea-docs",
+          "displayName": "EEA Full Documentation",
+          "descriptionShort": "Contains EEA documents",
+          "descriptionLong": "Contains EEA documents.",
+          "type": "product",
+          "tags": ["eea-docs"]
+        },
+        {
+          "name": "eea_interface",
+          "displayName": "Interface",
+          "descriptionShort": "Contains Interface",
+          "descriptionLong": "Contains Interface",
+          "type": "category",
+          "tags": [
+            "eea_interface"
+          ]
+        },
+        {
+          "name": "eea_dimensioning",
+          "displayName": "Dimensioning",
+          "descriptionShort": "Contains Dimensioning",
+          "descriptionLong": "Contains Dimensioning",
+          "type": "category",
+          "tags": [
+            "eea_dimensioning"
+          ]
+        },
+        {
+          "name": "eea_planning_and_dimensioning",
+          "displayName": "Planning and Dimensioning",
+          "descriptionShort": "Contains Planning and Dimensioning",
+          "descriptionLong": "Contains Planning and Dimensioning",
+          "type": "category",
+          "tags": [
+            "eea_planning_and_dimensioning"
+          ]
+        },
+        {
+          "name": "eea_data_models",
+          "displayName": "Data Models",
+          "descriptionShort": "Contains Data Models",
+          "descriptionLong": "Contains Data Models",
+          "type": "category",
+          "tags": [
+            "eea_data_models"
+          ]
+        },
+        {
+          "name": "eea_system_integration_and_configuration",
+          "displayName": "System Integration and Configuration",
+          "descriptionShort": "Contains System Integration and Configuration",
+          "descriptionLong": "Contains System Integration and Configuration",
+          "type": "category",
+          "tags": [
+            "eea_system_integration_and_configuration"
+          ]
+        },
+        {
+          "name": "eea_library_overview",
+          "displayName": "Library Overview",
+          "descriptionShort": "Contains Library Overview",
+          "descriptionLong": "Contains Library Overview",
+          "type": "category",
+          "tags": [
+            "eea_library_overview"
+          ]
+        },
+        {
+          "name": "eea_planning",
+          "displayName": "Planning",
+          "descriptionShort": "Contains Planning",
+          "descriptionLong": "Contains Planning",
+          "type": "category",
+          "tags": [
+            "eea_planning"
+          ]
+        },
+        {
+          "name": "eea_distributed_setup",
+          "displayName": "Distributed Setup",
+          "descriptionShort": "Contains Distributed Setup",
+          "descriptionLong": "Contains Distributed Setup",
+          "type": "category",
+          "tags": [
+            "eea_distributed_setup"
+          ]
+        },
+        {
+          "name": "eea_installation",
+          "displayName": "Installation",
+          "descriptionShort": "Contains Installation",
+          "descriptionLong": "Contains Installation",
+          "type": "category",
+          "tags": [
+            "eea_installation"
+          ]
+        },
+        {
+          "name": "eea_library_explorer",
+          "displayName": "Library Explorer",
+          "descriptionShort": "Contains Library Explorer",
+          "descriptionLong": "Contains Library Explorer",
+          "type": "category",
+          "tags": [
+            "eea_library_explorer"
+          ]
+        },
+        {
+          "name": "eea_security_information",
+          "displayName": "Security Information",
+          "descriptionShort": "Contains Security Information",
+          "descriptionLong": "Contains Security Information",
+          "type": "category",
+          "tags": [
+            "eea_security_information"
+          ]
+        },
+        {
+          "name": "eea_security_management",
+          "displayName": "Security Management",
+          "descriptionShort": "Contains Security Management",
+          "descriptionLong": "Contains Security Management",
+          "type": "category",
+          "tags": [
+            "eea_security_management"
+          ]
+        },
+        {
+          "name": "eea_fault_management",
+          "displayName": "Fault Management",
+          "descriptionShort": "Contains Fault Management",
+          "descriptionLong": "Contains Fault Management",
+          "type": "category",
+          "tags": [
+            "eea_fault_management"
+          ]
+        },
+        {
+          "name": "eea_troubleshooting_information",
+          "displayName": "Troubleshooting Information",
+          "descriptionShort": "Contains Troubleshooting Information",
+          "descriptionLong": "Contains Troubleshooting Information",
+          "type": "category",
+          "tags": [
+            "eea_troubleshooting_information"
+          ]
+        },
+        {
+          "name": "eea_user_interface_guides",
+          "displayName": "User Interface Guides",
+          "descriptionShort": "Contains User Interface Guides",
+          "descriptionLong": "Contains User Interface Guides",
+          "type": "category",
+          "tags": [
+            "eea_user_interface_guides"
+          ]
+        },
+        {
+          "name": "eea_configuration_information",
+          "displayName": "Configuration Information",
+          "descriptionShort": "Contains Configuration Information",
+          "descriptionLong": "Contains Configuration Information",
+          "type": "category",
+          "tags": [
+            "eea_configuration_information"
+          ]
+        },
+        {
+          "name": "eea_configuration_management",
+          "displayName": "Configuration Management",
+          "descriptionShort": "Contains Configuration Management",
+          "descriptionLong": "Contains Configuration Management",
+          "type": "category",
+          "tags": [
+            "eea_configuration_management"
+          ]
+        },
+        {
+          "name": "eea_upgrade",
+          "displayName": "Upgrade",
+          "descriptionShort": "Contains Upgrade",
+          "descriptionLong": "Contains Upgrade",
+          "type": "category",
+          "tags": [
+            "eea_upgrade"
+          ]
+        },
+        {
+          "name": "eea_provisioning",
+          "displayName": "Provisioning",
+          "descriptionShort": "Contains Provisioning",
+          "descriptionLong": "Contains Provisioning",
+          "type": "category",
+          "tags": [
+            "eea_provisioning"
+          ]
+        },
+        {
+          "name": "eea_performance_information",
+          "displayName": "Performance Information",
+          "descriptionShort": "Contains Performance Information",
+          "descriptionLong": "Contains Performance Information",
+          "type": "category",
+          "tags": [
+            "eea_performance_information"
+          ]
+        },
+        {
+          "name": "eea_performance_management",
+          "displayName": "Performance Management",
+          "descriptionShort": "Contains Performance Management",
+          "descriptionLong": "Contains Performance Management",
+          "type": "category",
+          "tags": [
+            "eea_performance_management"
+          ]
+        },
+        {
+          "name": "eea_data_collection_information",
+          "displayName": "Data Collection Information",
+          "descriptionShort": "Contains Data Collection Information",
+          "descriptionLong": "Contains Data Collection Information",
+          "type": "category",
+          "tags": [
+            "eea_data_collection_information"
+          ]
+        },
+        {
+          "name": "eea_product_overview",
+          "displayName": "Product Overview",
+          "descriptionShort": "Contains Product Overview",
+          "descriptionLong": "Contains Product Overview",
+          "type": "category",
+          "tags": [
+            "eea_product_overview"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "eic-documentation",
+      "version": "0.0.1",
+      "packageDescription": "EIC Documentation",
+      "path": "/eic-documentation/relative/path/to",
+      "type": "zip",
+      "sourceDocuments": [
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/17473-AOM901560UEN",
+            "revision": "D"
+          },
+          "metadata": {
+            "displayName": "EIC Hardening Guide",
+            "descriptionLong": "Long EIC Hardening Guide Overview",
+            "descriptionShort": "Short EIC Hardening Guide Overview",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-security"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "2/1543-AOM901560UEN",
+            "revision": "AE"
+          },
+          "metadata": {
+            "displayName": "EIC Security User Guide",
+            "descriptionLong": "Long description EIC Security User Guide Overview",
+            "descriptionShort": "Short description EIC Security User Guide Overview",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-security"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1550-AOM901560UEN",
+            "revision": "D"
+          },
+          "metadata": {
+            "displayName": "EIC Getting Started Guide",
+            "descriptionLong": "Long description EIC Getting Started Guide Overview",
+            "descriptionShort": "Short description EIC Getting Started Guide Overview",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-overview"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1551-AOM901560UEN",
+            "revision": "M"
+          },
+          "metadata": {
+            "displayName": "EIC Product Description",
+            "descriptionLong": "Long description EIC Product Description Overview",
+            "descriptionShort": "Short description EIC Product Description Overview",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-overview"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "10948-AOM901560UEN",
+            "revision": "K"
+          },
+          "metadata": {
+            "displayName": "EIC Product Impact Report",
+            "descriptionLong": "Long description EIC Product Impact Report Overview",
+            "descriptionShort": "Short description EIC Product Impact Report Overview",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-overview"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1553-CRX901363UEN",
+            "revision": "C"
+          },
+          "metadata": {
+            "displayName": "Application Manager User Guide",
+            "descriptionLong": "Long description Application Manager User Guide",
+            "descriptionShort": "Short description Application Manager User Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1553-CSX101138UEN",
+            "revision": "G"
+          },
+          "metadata": {
+            "displayName": "EIC Topology Handling User Guide",
+            "descriptionLong": "Long description EIC Topology Handling User Guide",
+            "descriptionShort": "Short description EIC Topology Handling User Guide ",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1553-AOM901960UEN",
+            "revision": "D"
+          },
+          "metadata": {
+            "displayName": "System Monitor User Guide",
+            "descriptionLong": "Long description System Monitor User Guide",
+            "descriptionShort": "Short description System Monitor User Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1553-CRX901369UEN",
+            "revision": "G"
+          },
+          "metadata": {
+            "displayName": "EIC User Administration User Guide",
+            "descriptionLong": "Long description EIC User Administration User Guide",
+            "descriptionShort": "Short description EIC User Administration User Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1553-APR201360UEN",
+            "revision": "B"
+          },
+          "metadata": {
+            "displayName": "EIC Connected Systems User Guide",
+            "descriptionLong": "Long description EIC Connected Systems User Guide",
+            "descriptionShort": "Short description EIC Connected Systems User Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "2/1543-CSX101135UEN",
+            "revision": "K1"
+          },
+          "metadata": {
+            "displayName": "Analytic and Data Collection System Administrator Guide",
+            "descriptionLong": "Long description Analytic and Data Collection System Administrator Guide",
+            "descriptionShort": "Short description Analytic and Data Collection System Administrator Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1543-CSX101141UEN",
+            "revision": "C"
+          },
+          "metadata": {
+            "displayName": "Application Manager System Administrator Guide",
+            "descriptionLong": "Long description Application Manager System Administrator Guide",
+            "descriptionShort": "Short description Application Manager System Administrator Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1543-CSX101135UEN",
+            "revision": "L"
+          },
+          "metadata": {
+            "displayName": "Data Management & Movement System Administrator Guide",
+            "descriptionLong": "Long description Data Management & Movement System Administrator Guide",
+            "descriptionShort": "Short description Data Management & Movement System Administrator Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1543-AOM901560UEN",
+            "revision": "T"
+          },
+          "metadata": {
+            "displayName": "EIC Backup and Restore Guide",
+            "descriptionLong": "Long description EIC Backup and Restore Guide",
+            "descriptionShort": "Short description EIC Backup and Restore Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1543-AOM901560UEN",
+            "revision": "K1"
+          },
+          "metadata": {
+            "displayName": "EIC System Administration Guide",
+            "descriptionLong": "Long description EIC System Administration Guide",
+            "descriptionShort": "Short description EIC System Administration Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "3/1543-CSX101144UEN",
+            "revision": "F"
+          },
+          "metadata": {
+            "displayName": "Portal and Help System Administrator Guide",
+            "descriptionLong": "Long description Portal and Help System Administrator Guide",
+            "descriptionShort": "Short description Portal and Help System Administrator Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1543-CSX101138UEN",
+            "revision": "F1"
+          },
+          "metadata": {
+            "displayName": "Topology Handling System Administrator Guide",
+            "descriptionLong": "Long description Topology Handling System Administrator Guide",
+            "descriptionShort": "Short description Topology Handling System Administrator Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "2/1543-CSX101144UEN",
+            "revision": "G"
+          },
+          "metadata": {
+            "displayName": "Service Exposure System Administrator Guide",
+            "descriptionLong": "Long description Service Exposure System Administrator Guide",
+            "descriptionShort": "Short description Service Exposure System Administrator Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "3/1543-AOM901560UEN",
+            "revision": "C"
+          },
+          "metadata": {
+            "displayName": "System Monitor System Administrator Guide",
+            "descriptionLong": "Long description System Monitor System Administrator Guide",
+            "descriptionShort": "Short description System Monitor System Administrator Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1543-CSX101136UEN",
+            "revision": "E"
+          },
+          "metadata": {
+            "displayName": "User Administrator System Administrator Guide",
+            "descriptionLong": "Long description User Administrator System Administrator Guide",
+            "descriptionShort": "Short description User Administrator System Administrator Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/1543-CSX101142UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "PM Stats Calculation Handling System Administrator Guide",
+            "descriptionLong": "Long description PM Stats Calculation Handling System Administrator Guide",
+            "descriptionShort": "Short description PM Stats Calculation Handling System Administrator Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-operation",
+              "eic-configuration"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "00651-AOM901560UEN",
+            "revision": "B"
+          },
+          "metadata": {
+            "displayName": "EIC Trademark Information",
+            "descriptionLong": "Long description EIC Trademark Information",
+            "descriptionShort": "Short description EIC Trademark Information",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-library"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "3/1551-FCK10105UEN",
+            "revision": "C"
+          },
+          "metadata": {
+            "displayName": "EIC Typographic Conventions",
+            "descriptionLong": "Long description EIC Typographic Conventions",
+            "descriptionShort": "Short description EIC Typographic Conventions",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-library"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "3/1551-FCK10105UEN",
+            "revision": "C"
+          },
+          "metadata": {
+            "displayName": "Database PVC Low Disk Spaces",
+            "descriptionLong": "Database PVC Low Disk Spaces",
+            "descriptionShort": "Database PVC Low Disk Spaces",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-fm",
+              "eic-alarms"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Database PVC Low Disk Spaces",
+            "descriptionLong": "Database PVC Low Disk Spaces",
+            "descriptionShort": "Database PVC Low Disk Spaces",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-fm",
+              "eic-alarms"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "2/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Object Storage MN Low Disk Space",
+            "descriptionLong": "Object Storage MN Low Disk Space",
+            "descriptionShort": "Object Storage MN Low Disk Space",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-fm",
+              "eic-alarms"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "3/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Object Storage MN Disks Offline",
+            "descriptionLong": "Object Storage MN Disks Offline",
+            "descriptionShort": "Object Storage MN Disks Offline",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-fm",
+              "eic-alarms"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "4/15431-CRX901377UEN",
+            "revision": "B"
+          },
+          "metadata": {
+            "displayName": "Diagnostic Data Collector Low Disk Space",
+            "descriptionLong": "Diagnostic Data Collector Low Disk Space",
+            "descriptionShort": "Diagnostic Data Collector Low Disk Space",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-docs",
+              "research-development",
+              "eic-fm",
+              "eic-alarms"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "5/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Diagnostic Data Collector Transfer Speed Dropped Down",
+            "descriptionLong": "Long Diagnostic Data Collector Transfer Speed Dropped Down",
+            "descriptionShort": "Short Diagnostic Data Collector Transfer Speed Dropped Down",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "6/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Diagnostic Data Collector Exceeding SFTP Transfer Failures",
+            "descriptionLong": "Long Diagnostic Data Collector Exceeding SFTP Transfer Failures",
+            "descriptionShort": "Short Diagnostic Data Collector Exceeding SFTP Transfer Failures",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "7/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Data Distributed Coordinator Low Disk Space",
+            "descriptionLong": "Long Data Distributed Coordinator Low Disk Space",
+            "descriptionShort": "Short Data Distributed Coordinator Low Disk Space",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "8/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Search Engine Low Disk Space",
+            "descriptionLong": "Long Search Engine Low Disk Space",
+            "descriptionShort": "Short Search Engine Low Disk Space",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "9/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Search Engine Primary Shard Missing",
+            "descriptionLong": "Long Search Engine Primary Shard Missing",
+            "descriptionShort": "Short Search Engine Primary Shard Missing",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "10/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Search Engine Replicas Missing",
+            "descriptionLong": "Long Search Engine Replicas Missing",
+            "descriptionShort": "Short Search Engine Replicas Missing",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "11/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "PM Server Low Disk Space",
+            "descriptionLong": "Long PM Server Low Disk Space",
+            "descriptionShort": "Short PM Server Low Disk Space",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "12/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "PM Server Low Container Memory",
+            "descriptionLong": "Long PM Server Low Container Memory",
+            "descriptionShort": "Short PM Server Low Container Memory",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "13/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "PM Server Low Container CPU",
+            "descriptionLong": "Long PM Server Low Container CPU",
+            "descriptionShort": "Short PM Server Low Container CPU",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "14/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Backup and Restore Orchestrator Low Disk Space",
+            "descriptionLong": "Long Backup and Restore Orchestrator Low Disk Space",
+            "descriptionShort": "Short Backup and Restore Orchestrator Low Disk Space",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "15/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Backup and Restore Orchestrator No Recent Backup",
+            "descriptionLong": "Long Backup and Restore Orchestrator No Recent Backup",
+            "descriptionShort": "Short Backup and Restore Orchestrator No Recent Backup",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "16/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Backup and Restore Orchestrator Backup Export Failure",
+            "descriptionLong": "Long Backup and Restore Orchestrator Backup Export Failure",
+            "descriptionShort": "Short Backup and Restore Orchestrator Backup Export Failure",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "17/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Backup And Restore Orchestrator Backup Create Failure",
+            "descriptionLong": "Long Backup And Restore Orchestrator Backup Create Failure",
+            "descriptionShort": "Short Backup And Restore Orchestrator Backup Create Failure",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "18/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Backup And Restore Orchestrator Backup Restoration Failure",
+            "descriptionLong": "Long Backup And Restore Orchestrator Backup Restoration Failure",
+            "descriptionShort": "Short Backup And Restore Orchestrator Backup Restoration Failure",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "19/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Backup And Restore Orchestrator Backup Deletion Failure",
+            "descriptionLong": "Long Backup And Restore Orchestrator Backup Deletion Failure",
+            "descriptionShort": "Short Backup And Restore Orchestrator Backup Deletion Failure",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "20/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "Internal CA Internal Certificate Creation Failure",
+            "descriptionLong": "Long Internal CA Internal Certificate Creation Failure",
+            "descriptionShort": "Short Internal CA Internal Certificate Creation Failure",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "21/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "License Manager Autonomous Mode Activated",
+            "descriptionLong": "Long License Manager Autonomous Mode Activated",
+            "descriptionShort": "Short License Manager Autonomous Mode Activated",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "22/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "License Manager License Grace Period Activated",
+            "descriptionLong": "Long License Manager License Grace Period Activated",
+            "descriptionShort": "Short License Manager License Grace Period Activated",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "23/15431-CRX901377UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "License Manager License Usage Processing Failed",
+            "descriptionLong": "Long License Manager License Usage Processing Failed",
+            "descriptionShort": "Short License Manager License Usage Processing Failed",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-alarms",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "19083-AOM901560Uen",
+            "revision": "E"
+          },
+          "metadata": {
+            "displayName": "EIC Alarm List",
+            "descriptionLong": "Long EIC Alarm List",
+            "descriptionShort": "Short EIC Alarm List",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-fm",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/15901-CSX101141UEN",
+            "revision": "D1"
+          },
+          "metadata": {
+            "displayName": "Application Manager Troubleshooting Guide",
+            "descriptionLong": "Long Application Manager Troubleshooting Guide",
+            "descriptionShort": "Short Application Manager Troubleshooting Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-emergency",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "3/15901-CSX101138UEN",
+            "revision": "C"
+          },
+          "metadata": {
+            "displayName": "Ericsson Adaptation Support Troubleshooting Guide",
+            "descriptionLong": "Long Ericsson Adaptation Support Troubleshooting Guide",
+            "descriptionShort": "Short Ericsson Adaptation Support Troubleshooting Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-emergency",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "2/15901-CSX101144UEN",
+            "revision": "C"
+          },
+          "metadata": {
+            "displayName": "Service Exposure Troubleshooting Guide",
+            "descriptionLong": "Long Service Exposure Troubleshooting Guide",
+            "descriptionShort": "Short Service Exposure Troubleshooting Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-emergency",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "2/15901-CSX101135UEN",
+            "revision": "H"
+          },
+          "metadata": {
+            "displayName": "Analytic and Data Collection Troubleshooting Guide",
+            "descriptionLong": "Long Analytic and Data Collection Troubleshooting Guide",
+            "descriptionShort": "Short Analytic and Data Collection Troubleshooting Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-emergency",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/15901-CSX101135UEN",
+            "revision": "H"
+          },
+          "metadata": {
+            "displayName": "Data Management and Movement Troubleshooting Guide",
+            "descriptionLong": "Long Data Management and Movement Troubleshooting Guide",
+            "descriptionShort": "Short Data Management and Movement Troubleshooting Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-emergency",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "15901-AOM901560UEN",
+            "revision": "S"
+          },
+          "metadata": {
+            "displayName": "EIC Troubleshooting Guide",
+            "descriptionLong": "Long EIC Troubleshooting Guide",
+            "descriptionShort": "Short EIC Troubleshooting Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-emergency",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "2/15901-CSX101136UEN",
+            "revision": "E"
+          },
+          "metadata": {
+            "displayName": "Log Viewer Troubleshooting Guide",
+            "descriptionLong": "Long Log Viewer Troubleshooting Guide",
+            "descriptionShort": "Short Log Viewer Troubleshooting Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-emergency",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "3/15901-CSX101144UEN",
+            "revision": "D"
+          },
+          "metadata": {
+            "displayName": "Portal and Help Troubleshooting Guide",
+            "descriptionLong": "Long Portal and Help Troubleshooting Guide",
+            "descriptionShort": "Short Portal and Help Troubleshooting Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-emergency",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "1/15901-CSX101136UEN",
+            "revision": "D"
+          },
+          "metadata": {
+            "displayName": "User Administration Troubleshooting Guide",
+            "descriptionLong": "Long User Administration Troubleshooting Guide",
+            "descriptionShort": "Short User Administration Troubleshooting Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-emergency",
+              "eic-docs"
+            ]
+          }
+        },
+        {
+          "format": "dita",
+          "eridoc": {
+            "docNumber": "2/15901-CSX101142UEN",
+            "revision": "A"
+          },
+          "metadata": {
+            "displayName": "PM Stats Calculation Handling Troubleshooting Guide",
+            "descriptionLong": "Long PM Stats Calculation Handling Troubleshooting Guide",
+            "descriptionShort": "Short PM Stats Calculation Handling Troubleshooting Guide",
+            "type": "document",
+            "format": "html",
+            "childNames": [],
+            "groupNames": [
+              "eic-emergency",
+              "eic-docs"
+            ]
+          }
+        }
+      ],
+      "groups": [
+        {
+          "name": "eic-docs",
+          "displayName": "EIC Documentation",
+          "descriptionShort": "Contains EIC documents",
+          "descriptionLong": "Contains EIC documents.",
+          "type": "product",
+          "tags": [
+            "eic-docs"
+          ]
+        },
+        {
+          "name": "eic-security",
+          "displayName": "EIC Security",
+          "descriptionShort": "Contains EIC security documents",
+          "descriptionLong": "Contains EIC security documents.",
+          "type": "category",
+          "tags": [
+            "eic-security"
+          ]
+        },
+        {
+          "name": "eic-overview",
+          "displayName": "EIC Product Overview",
+          "descriptionShort": "Contains EIC Product Overview",
+          "descriptionLong": "Contains EIC Product Overview documents.",
+          "type": "category",
+          "tags": [
+            "eic-overview"
+          ]
+        },
+        {
+          "name": "eic-operation",
+          "displayName": "EIC Operation and Maintenance",
+          "descriptionShort": "Contains EIC Operation and Maintenance",
+          "descriptionLong": "Contains EIC Operation and Maintenance documents.",
+          "type": "category",
+          "tags": [
+            "eic-operation"
+          ]
+        },
+        {
+          "name": "eic-configuration",
+          "displayName": "EIC Configuration and Usage",
+          "descriptionShort": "Contains EIC Configuration and Usage",
+          "descriptionLong": "Contains EIC Configuration and Usage documents.",
+          "type": "category",
+          "tags": [
+            "eic-configuration"
+          ]
+        },
+        {
+          "name": "eic-administration",
+          "displayName": "EIC System Administration",
+          "descriptionShort": "Contains EIC System Administration",
+          "descriptionLong": "Contains EIC System Administration documents.",
+          "type": "category",
+          "tags": [
+            "eic-administration"
+          ]
+        },
+        {
+          "name": "eic-library",
+          "displayName": "EIC Library Overview",
+          "descriptionShort": "Contains EIC Library Overview",
+          "descriptionLong": "Contains EIC Library Overview documents.",
+          "type": "category",
+          "tags": [
+            "eic-library"
+          ]
+        },
+        {
+          "name": "eic-fm",
+          "displayName": "EIC Fault Management",
+          "descriptionShort": "Contains EIC Fault Management",
+          "descriptionLong": "Contains EIC Fault Management documents.",
+          "type": "category",
+          "tags": [
+            "eic-fm"
+          ]
+        },
+        {
+          "name": "eic-alarms",
+          "displayName": "EIC Alarm Handling Operational Instructions",
+          "descriptionShort": "Contains EIC Alarm Handling Operational Instructions",
+          "descriptionLong": "Contains EIC Alarm Handling Operational Instructions documents.",
+          "type": "category",
+          "tags": [
+            "eic-alarms"
+          ]
+        },
+        {
+          "name": "eic-emergency",
+          "displayName": "EIC Emergency",
+          "descriptionShort": "Contains EIC Emergency",
+          "descriptionLong": "Contains EIC Emergency documents.",
+          "type": "category",
+          "tags": [
+            "eic-emergency"
+          ]
+        }
+      ]
+    }
+  ]
+}

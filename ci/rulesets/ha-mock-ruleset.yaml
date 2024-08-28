@@ -1,0 +1,94 @@
+modelVersion: 2.0
+import:
+  common: ../../ruleset2.0.yaml
+  functions: ../../ruleset-functions.yaml
+
+docker-images:
+  - ha-build-tools: armdocker.rnd.ericsson.se/proj-eea-drop/help-aggregator-build-tools:latest
+
+properties:
+  - temp-folder: .bob/temp-mock
+  - mock-folder: ${temp-folder}/mock
+  - original-mock-folder: ha-mocks/mock
+  - mock-domain-ui-generic: ${mock-folder}/domain-ui-generic
+  - mock-help-content-folder: ${mock-domain-ui-generic}/mock-help-content
+  - mock-config-folder: ${mock-domain-ui-generic}/configs
+  - mock-e2e-config-name: multi-package-e2e-config.json
+  - config: ${mock-config-folder}/${mock-e2e-config-name}
+  - helm-chart-name-docs: ${common.helm-chart-name-docs}
+  - image-version: ${var.common.mock-doc-version}
+  - test-dummy-chart-file-name-docs: ${helm-chart-name-docs}-${image-version}.tgz
+
+env:
+  - ERIDOC_USERNAME (default=notset)
+  - ERIDOC_PASSWORD (default=notset)
+
+rules:
+  copy-mocks:
+    - task: copy
+      cmd:
+        - mkdir -p ${mock-folder}
+        - cp -r ${original-mock-folder} ${temp-folder}
+
+  process-help-content:
+    - task: process-help-content
+      docker-image: ha-build-tools
+      cmd: toolkit e2eMultiDoc $(pwd)/${config}
+        --login ${env.ERIDOC_USERNAME}
+        --password ${env.ERIDOC_PASSWORD}
+        --outPath $(pwd)/${mock-help-content-folder}
+        --publicFolder $(pwd)/${mock-folder}/domain-ui-generic/public/help-center-docs-mock
+        --retry 3
+        --retry-delay 1000
+
+  dry-run-help-content:
+    - task: process-help-content
+      docker-image: ha-build-tools
+      cmd: toolkit e2eMultiDoc $(pwd)/${config}
+        --login ${env.ERIDOC_USERNAME}
+        --password ${env.ERIDOC_PASSWORD}
+        --outPath $(pwd)/${mock-help-content-folder}
+        --publicFolder $(pwd)/${mock-folder}/domain-ui-generic/public/help-center-docs-mock
+        --dry-run
+
+  generate-test-dummy-service:
+    - rule: generate-dummy-service
+      properties:
+        - image-version: ${var.common.mock-doc-version-test}
+
+  generate-dummy-service:
+    - rule: generate-docs-service
+    - rule: upload-docs-image
+
+  generate-docs-service:
+    - task: prepare-image-folder
+      docker-image: common.adp-release-auto
+      cmd: mkdir -p .bob/${helm-chart-name-docs}-internal
+    - task: build-dummy-service-image
+      cmd: DOCKER_BUILDKIT=1 docker build ${PWD#}
+        --file ${mock-domain-ui-generic}/Dockerfile
+        --secret id=arm_npm_token,src=.bob/var.token
+        --secret id=rnd_arm_npm_token,src=.bob/var.rnd-token
+        --tag ${common.image-registry}/${common.image-drop-repo-path}/${common.docker-image-name}-docs-dummyservice:${image-version}
+    - task: build-dummy-service-chart
+      docker-image: common.adp-release-auto
+      docker-flags:
+        - "--env ENABLE_HELM_V3=true"
+      cmd: helm-package
+        --folder ${mock-folder}/charts/domain-ui-generic
+        --replace REPO_PATH=${common.image-drop-repo-path}
+        --replace IMAGE_NAME=${common.docker-image-name}-docs-dummyservice
+        --replace VERSION=${image-version}
+        --version ${image-version}
+        --output .bob/${helm-chart-name-docs}-internal
+
+  upload-docs-image:
+    - task: functions.release:upload-file # publish-to-drop-repo
+      properties:
+        - file-to-upload: .bob/${helm-chart-name-docs}-internal/${test-dummy-chart-file-name-docs}
+        - repo-for-upload: ${common.helm-chart-drop-repo}/${helm-chart-name-docs}
+        - upload-api-token: ${env.common.ARM_TOKEN_SELI}
+    - task: wait-for-artifactory-indexing
+      cmd: sleep 10
+    - task: dummy-service-image-push-internal
+      cmd: docker push ${common.image-registry}/${common.image-drop-repo-path}/${common.docker-image-name}-docs-dummyservice:${image-version}

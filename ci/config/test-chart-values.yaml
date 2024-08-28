@@ -1,0 +1,45 @@
+global:
+  networkPolicy:
+    enabled: true
+
+ingress:
+  enabled: true
+  useContour: true
+  hostname:
+  path: /
+  ingressClass: EEA-Applications
+  adpIccrServiceName: eric-eea-ingress-ctrl-common
+  tls:
+    enabled: true
+
+log:
+  streamingMethod: indirect
+
+configuration:
+  faultIndications:
+    enabled: false
+  helpAggregator:
+    enabled: true
+  userPermission:
+    enabled: true
+
+metrics:
+  enabled: false
+
+authorizationProxy:
+  enabled: true
+  adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+manualconfig:
+  groupMappings:
+    - group: mock-group
+      apps:
+        - charts
+
+dst:
+  enabled: true
+
+uiconfig:
+  uiSettings:
+    storageMode: uiSettingsService
+    baseUrl:

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  annotations:
+  labels:
+  name: {{ include "domain-ui-generic.name" . }}-ingress-networkpolicy
+spec:
+  podSelector:
+    matchLabels:
+      dui-generic: {{ include "domain-ui-generic.name" . }}
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: eric-tm-ingress-controller-cr
+  policyTypes:
+    - Ingress

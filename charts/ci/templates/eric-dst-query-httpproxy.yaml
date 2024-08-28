@@ -1,0 +1,35 @@
+{{- if and (index .Values "eric-dst-query").ingress.enabled (index .Values "eric-dst-query").ingress.useContour (index .Values "eric-dst-query").enabled }}
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: dst-query-httpproxy
+  annotations:
+{{- if (index .Values "eric-dst-query").ingress.ingressClass }}
+    kubernetes.io/ingress.class: {{ (index .Values "eric-dst-query").ingress.ingressClass | toString }}
+{{- end }}
+spec:
+  virtualhost:
+    fqdn: {{ (index .Values "eric-dst-query").ingress.hostname }}
+    {{- if (index .Values "eric-dst-query").ingress.tls.enabled }}
+    tls:
+      secretName: {{ (index .Values "eric-dst-query").ingress.tls.existingSecret }}
+      minimumProtocolVersion: "1.2"
+    {{- end }}
+  routes:
+    - conditions:
+      - prefix: /
+      services:
+        - name: eric-dst-query
+        {{- if .Values.global.security.tls.enabled }}
+          protocol: tls
+          port: {{ (index .Values "eric-dst-query").service.httpsPort }}
+          validation:
+            caSecret: eric-sec-sip-tls-trusted-root-cert
+            subjectName: eric-dst-query
+        {{ else }}
+          port: 80
+        {{- end }}
+      timeoutPolicy:
+        response: infinity
+        idle: infinity
+{{- end }}

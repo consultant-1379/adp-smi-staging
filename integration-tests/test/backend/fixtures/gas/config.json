@@ -1,0 +1,60 @@
+{
+  "apps": [],
+  "components": [
+    {
+      "service": "eric-adp-gui-aggregator-service",
+      "name": "gas-settings-plugin",
+      "version": "1.0.0",
+      "module": "gas-settings-plugin",
+      "displayName": "Settings plugin",
+      "type": "euisdk:plugin"
+    },
+    {
+      "service": "eric-adp-gui-aggregator-service",
+      "name": "authentication",
+      "version": "1.0.0",
+      "module": "authentication",
+      "displayName": "Authentication plugin",
+      "type": "euisdk:plugin"
+    },
+    {
+      "service": "eric-adp-gui-aggregator-service",
+      "name": "navigation-plugin",
+      "version": "1.0.0",
+      "module": "navigation-plugin",
+      "displayName": "Navigation plugin",
+      "type": "euisdk:plugin"
+    },
+    {
+      "service": "eric-adp-gui-aggregator-service",
+      "name": "appstate-plugin",
+      "version": "1.0.0",
+      "module": "appstate-plugin",
+      "displayName": "AppState plugin",
+      "type": "euisdk:plugin"
+    },
+    {
+      "name": "ui-settings-plugin",
+      "version": "1.0.0",
+      "module": "ui-settings-plugin",
+      "displayName": "UI Settings plugin",
+      "type": "euisdk:plugin"
+    },
+    {
+      "name": "systembar-global-navigation",
+      "module": "e-systembar-global-navigation",
+      "displayName": "Systembar global navigation",
+      "version": "1.0.0",
+      "type": "euisdk:system"
+    },
+    {
+      "service": "eric-adp-gui-aggregator-service",
+      "name": "systembar-user-info",
+      "module": "e-systembar-user-info",
+      "displayName": "Systembar user info",
+      "version": "1.0.0",
+      "type": "euisdk:system"
+    }
+  ],
+  "groups": []
+}

@@ -1,0 +1,17 @@
+global:
+  security:
+    tls:
+      enabled: false
+
+ingress:
+  enabled: false
+
+manualconfig:
+  services:
+    - name: ui-generic-eea
+      version: 1.0
+      URL: http://demo-ui-service-eea-http:4000
+  groupMappings:
+    - group: mock-group
+      apps:
+        - charts

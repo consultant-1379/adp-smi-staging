@@ -1,0 +1,10 @@
+#!/bin/sh
+
+node git-hooks/commit-msg.d/smi-commit-msg.js "$1"
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+./git-hooks/commit-msg.d/gerrit-commit-msg "$1"
+if [ $? -ne 0 ]; then
+    exit 1
+fi

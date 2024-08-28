@@ -1,0 +1,4 @@
+Makefile whitespace=trailing-space
+*.sh text eol=lf
+*.cfg text eol=lf
+CHANGELOG.md text merge=union

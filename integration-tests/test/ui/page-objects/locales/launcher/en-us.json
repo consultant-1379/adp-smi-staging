@@ -1,0 +1,8 @@
+{
+  "MENU": {
+    "LAUNCHER": "Products and Applications",
+    "ALL": "All Apps"
+  },
+  "LOG_IN_NOTIFICATION_TITLE": "Sign in",
+  "LOG_IN_NOTIFICATION_TEXT": "Your previous sign in was {{lastLoginTime}}"
+}

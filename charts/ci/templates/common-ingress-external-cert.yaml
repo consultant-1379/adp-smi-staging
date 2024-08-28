@@ -1,0 +1,21 @@
+{{- $global := fromJson (include "ci.global" .) -}}
+{{- if $global.security.tls.enabled }}
+apiVersion: siptls.sec.ericsson.com/v1
+kind: InternalCertificate
+metadata:
+  name: common-ingress-external-cert
+  labels:
+  annotations:
+spec:
+  kubernetes:
+    generatedSecretName: common-ingress-external-cert
+    secretType: tls
+  certificate:
+    subject:
+      cn: common-ingress-host-name
+    extendedKeyUsage:
+      tlsClientAuth: true
+      tlsServerAuth: true
+    validity:
+      overrideTtl: 2592000 # 30 days in seconds
+{{- end }}

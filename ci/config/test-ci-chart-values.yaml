@@ -1,0 +1,142 @@
+eric-sec-access-mgmt:
+  enabled: true
+  ingress:
+    hostname:
+  authenticationProxy:
+    ingress:
+      hostname:
+  service:
+    endpoints:
+      iam:
+        tls:
+          verifyClientCertificate: optional
+      authenticationproxy:
+        tls:
+          verifyClientCertificate: optional
+
+eric-oss-help-aggregator:
+  ingress:
+    enabled: true
+    useContour: true
+    hostname:
+    path: /
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+    tls:
+      enabled: true
+      existingSecret: common-ingress-external-cert
+  configuration:
+    faultIndications:
+      enabled: false
+    guiAggregator:
+      enabled: true
+  metrics:
+    enabled: false
+  dst:
+    enabled: true
+  log:
+    streamingMethod: indirect
+  authorizationProxy:
+    enabled: true
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+  service:
+    endpoints:
+      authenticationproxy:
+        tls:
+          verifyClientCertificate: optional
+
+eric-oss-ui-settings:
+  ingress:
+    enabled: true
+    useContour: true
+    hostname:
+    path: /
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+    tls:
+      enabled: true
+      existingSecret: common-ingress-external-cert
+  configuration:
+    faultIndications:
+      enabled: false
+  metrics:
+    enabled: false
+  log:
+    streamingMethod: indirect
+  authorizationProxy:
+    enabled: true
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+    authorizationRules: |
+      roles:
+      - name: all-in-one-ui-settings
+      - name: uis-admin
+      resources:
+      - name: uis-admin-resources
+        uris:
+        - /ui-settings/v1/cleanup/**
+      - name: all-in-one-ui-settings-resources
+        uris:
+        - /**
+      permissions:
+      - name: all-in-one-permission
+        config:
+          resources:        ["all-in-one-ui-settings-resources"]
+          operations:       ["GET","HEAD","POST","PUT","DELETE","CONNECT","OPTIONS","TRACE"]
+          roles:            ["all-in-one-ui-settings"]
+      - name: admin-permission
+        config:
+          resources:        ["uis-admin-resources", "all-in-one-ui-settings-resources"]
+          operations:       ["GET","HEAD","POST","PUT","DELETE","CONNECT","OPTIONS","TRACE"]
+          roles:            ["uis-admin"]
+
+help-center-mock-eea:
+  publicPath: help-center-mock-eea
+  contextRoot: ui
+  ingress:
+    enabled: true
+    useContour: true
+    hostname: localhost
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+help-center-mock-eea-real-doc:
+  publicPath: help-center-mock-eea-real-doc
+  contextRoot: overview
+  ingress:
+    enabled: true
+    useContour: true
+    hostname: localhost
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+help-center-mock-ecm:
+  publicPath: help-center-mock-ecm
+  contextRoot: some-path
+  ingress:
+    enabled: true
+    useContour: true
+    hostname: localhost
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+# ---- Search Engine (required by DST so far)
+eric-data-search-engine:
+  enabled: true
+
+# ---- Distributed Trace services
+eric-dst-collector:
+  enabled: true
+  samplingConfig: |-
+    {
+      "service_strategies": [],
+      "default_strategy": {
+        "type": "probabilistic",
+        "param": 1.0
+      }
+    }
+
+eric-dst-query:
+  enabled: true
+  ingress:
+    tls:
+      enabled: true

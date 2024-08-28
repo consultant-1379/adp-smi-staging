@@ -1,0 +1,18 @@
+global:
+  security:
+    tls:
+      enabled: false
+  pullSecret: arm-pullsecret
+
+ingress:
+  enabled: false
+
+log:
+  streamingMethod: indirect
+
+configuration:
+  faultIndications:
+    enabled: false
+
+metrics:
+  enabled: false

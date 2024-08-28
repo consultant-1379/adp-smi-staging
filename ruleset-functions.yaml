@@ -1,0 +1,236 @@
+modelVersion: 2.0
+
+docker-images:
+  - adp-release-auto: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-adp-release-auto:latest
+  - nodejs-builder: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/adp-nodejs-lts-builder-image:20.12.2-0
+  - k8-test: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-py3kubehelmbuilder:latest
+
+properties:
+  # common constants:
+  - docker-image-name: eric-adp-gui-aggregator-service
+  - image-registry: ${env.DOCKER_REGISTRY}
+  - helm-chart-repo-server: ${env.HELM_CHART_ARTIFACTORY}/artifactory
+  - helm-drop: proj-eea-drop-helm
+  - helm-release: proj-eea-released-helm
+  - helm-chart-name-ci: ci
+  - file-to-upload: ""
+  - repo-for-upload: ""
+  - upload-api-token: ""
+  - helm-chart-name-gas: eric-adp-gui-aggregator-service
+  - helm-chart-name-ha: eric-oss-help-aggregator
+  - helm-chart-name-uis: eric-oss-ui-settings
+  - helm-chart-name-docs: help-center-docs-mock
+  - helm-drop-artifactory-gas: ${helm-chart-repo-server}/${helm-drop}/${helm-chart-name-gas}/
+  - helm-drop-artifactory-ha: ${helm-chart-repo-server}/${helm-drop}/${helm-chart-name-ha}/
+  - helm-drop-artifactory-uis: ${helm-chart-repo-server}/${helm-drop}/${helm-chart-name-uis}/
+  - helm-drop-artifactory-docs: ${helm-chart-repo-server}/${helm-drop}/${helm-chart-name-docs}/
+  - helm-artifactory-ha: ${helm-chart-repo-server}/${var.ha-helm-repo}/${helm-chart-name-ha}/
+  - helm-artifactory-uis: ${helm-chart-repo-server}/${var.uis-helm-repo}/${helm-chart-name-uis}/
+  - mocks-config-yaml: ci/config/mocks-config.yaml
+  - image-repo-path: proj-eea-dev
+  - helm-chart-repo-path: proj-eea-dev-helm
+  - run-type: "dev"
+  - pri-param: ""
+  - is-release: "false"
+  - is-doc-release: "false"
+  - version: ""
+  # list of all Docker registries used in this repo:
+  - docker-registry-default: armdocker.rnd.ericsson.se
+
+var:
+  - version
+  - gas-mock-version
+  - ha-mock-version
+  - docs-mock-version # version of the documentation image to be deployed
+  - mock-doc-version # version of the newly created documentation image
+  - mock-doc-version-test # version of the newly created documentation image to be used only for testing (contains hash)
+  - ha-version
+  - uis-version
+  - gas-helm-repo
+  - ha-helm-repo
+  - uis-helm-repo
+  - run-type
+  - k8s-namespace
+  - ingress-iccr-ip
+
+env:
+  - DOCKER_REGISTRY (default=armdocker.rnd.ericsson.se)
+  - HELM_CHART_ARTIFACTORY (default=https://arm.seli.gic.ericsson.se)
+  - BUILD_TAG (default=proj-eea-app-local)
+  - GAS_VERSION (default=>0.0.0-0)
+  - UIS_VERSION (default=>0.0.0-0)
+  - ARM_USER_SELI (default=notset)
+  - ARM_TOKEN_SELI (default=notset)
+  - PWD (default=notset)
+  - KUBECONFIG (default=notset) #Have to set before run
+
+rules:
+  # common init tasks
+  init:
+    - task: version
+      docker-image: adp-release-auto
+      cmd:
+        - version-handler generate
+          --is-release ${is-release}
+          --output version
+          --git-repo-path .
+          --version-prefix-file "VERSION_PREFIX"
+        - sed -e 's@-.*$@@' .bob/var.version > .bob/var.semver
+        - sed -e 's/\..*$//' .bob/var.version > .bob/var.doc-version
+    - task: mock-doc-version
+      docker-image: adp-release-auto
+      cmd: >
+        bash -c '
+        if [ "${run-type}" = "docs" ];
+          then
+            version-handler generate --is-release ${is-doc-release} --output mock-doc-version --git-repo-path . --version-prefix-file "ha-mocks/mock/VERSION_PREFIX";
+            version-handler generate --is-release false --output mock-doc-version-test --git-repo-path . --version-prefix-file "ha-mocks/mock/VERSION_PREFIX";
+        fi'
+    - task: commit
+      docker-image: adp-release-auto
+      cmd: git rev-parse --short HEAD > .bob/var.commithash
+    - task: get-branch
+      docker-image: adp-release-auto
+      cmd: git rev-parse --abbrev-ref HEAD > .bob/var.branch
+    - task: rstate
+      docker-image: adp-release-auto
+      cmd: get_rstate.py ${var.version} > .bob/var.rstate
+    - task: image-repo-path-internal
+      cmd: echo "${image-repo-path}" > .bob/var.image-repo-path-internal
+    - task: image-full-name-internal
+      cmd: echo "${image-registry}/${image-repo-path}/${docker-image-name}" > .bob/var.image-full-name-internal
+    - task: helm-chart-repo-internal
+      cmd: echo "${helm-chart-repo-server}/${helm-chart-repo-path}" > .bob/var.helm-chart-repo-internal
+    - task: save-run-type
+      cmd: echo "${run-type}" > .bob/var.run-type
+    - task: gas-mock-version
+      cmd: >
+        bash -c '
+        if [ "${var.run-type}" = "demo" ] || [ "${var.run-type}" = "ci-test" ];
+          then
+            if [ "${env.GAS_VERSION}" = ">0.0.0-0" ];
+              then
+                curl -L -H "X-JFrog-Art-Api:${env.ARM_TOKEN_SELI}" ${helm-drop-artifactory-gas} -o .bob/var.gas-all-releases;
+                sed -i "s/[a-zA-Z]\+//g;s/< =*.*-----//g;s/<.*$//g;s/.*>.*$//g;s/[.][0-9]*$//g;s/[.] *$//g;/^$/d" .bob/var.gas-all-releases;
+                sort -V -u -b -r -o .bob/var.gas-all-releases .bob/var.gas-all-releases;
+                cut -d" " -f1 .bob/var.gas-all-releases | sed -n 1p > .bob/var.mock-version;
+              else
+                echo "${env.GAS_VERSION}" | sed "s/+/-/;s/>/~/" > .bob/var.mock-version;
+            fi
+          else
+            echo "${var.version}" > .bob/var.mock-version;
+        fi'
+    - task: ha-helm-repo
+      cmd: >
+        bash -c '
+        if [ "${var.run-type}" != "precodereview" ];
+          then
+            if [[ "${env.GAS_VERSION}" == *"+"* ]];
+              then
+                echo "${helm-release}" > .bob/var.ha-helm-repo;
+              else
+                echo "${helm-drop}" > .bob/var.ha-helm-repo;
+            fi
+        fi'
+    - task: uis-helm-repo
+      cmd: >
+        bash -c '
+        if [ "${var.run-type}" != "precodereview" ];
+          then
+            if [[ "${env.UIS_VERSION}" == *"+"* ]];
+              then
+                echo "${helm-release}" > .bob/var.uis-helm-repo;
+              else
+                echo "${helm-drop}" > .bob/var.uis-helm-repo;
+            fi
+        fi'
+    - task: ha-version
+      cmd: >
+        bash -c '
+        if [ "${var.run-type}" != "precodereview" ];
+          then
+            curl -L -H "X-JFrog-Art-Api:${env.ARM_TOKEN_SELI}" ${helm-artifactory-ha} -o .bob/var.ha-all-releases;
+            sed -i "s/[a-zA-Z]\+//g;s/< =*.*----//g;s/<.*$//g;s/.*>.*$//g;s/[.][0-9]*$//g;s/[.] *$//g;/^$/d" .bob/var.ha-all-releases;
+            sed -i '/dirty/d' .bob/var.ha-all-releases
+            sort -V -u -b -r -o .bob/var.ha-all-releases .bob/var.ha-all-releases;
+            cut -d" " -f1 .bob/var.ha-all-releases | sed -n 1p > .bob/var.ha-version;
+        fi'
+    - task: uis-version
+      cmd: >
+        bash -c '
+        if [ "${var.run-type}" != "precodereview" ];
+          then
+            curl -L -H "X-JFrog-Art-Api:${env.ARM_TOKEN_SELI}" ${helm-artifactory-uis} -o .bob/var.uis-all-releases;
+            sed -i "s/[a-zA-Z]\+//g;s/< =*.*----//g;s/<.*$//g;s/.*>.*$//g;s/[.][0-9]*$//g;s/[.] *$//g;/^$/d" .bob/var.uis-all-releases;
+            sed -i '/dirty/d' .bob/var.uis-all-releases
+            sort -V -u -b -r -o .bob/var.uis-all-releases .bob/var.uis-all-releases;
+            cut -d" " -f1 .bob/var.uis-all-releases | sed -n 1p > .bob/var.uis-version;
+        fi'
+    - task: ha-mock-version
+      cmd: >
+        bash -c '
+        if [ "${var.run-type}" != "precodereview" ];
+          then
+            curl -L -H "X-JFrog-Art-Api:${env.ARM_TOKEN_SELI}" ${helm-drop-artifactory-ha} -o .bob/var.ha-mock-all-releases;
+            sed -i "s/[a-zA-Z]\+//g;s/< =*.*----//g;s/<.*$//g;s/.*>.*$//g;s/[.][0-9]*$//g;s/[.] *$//g;/^$/d" .bob/var.ha-mock-all-releases;
+            sed -i '/dirty/d' .bob/var.ha-mock-all-releases
+            sort -V -u -b -r -o .bob/var.ha-mock-all-releases .bob/var.ha-mock-all-releases;
+            cut -d" " -f1 .bob/var.ha-mock-all-releases | sed -n 1p > .bob/var.ha-mock-version;
+        fi'
+    - task: docs-mock-version
+      cmd: >
+        bash -c '
+        if [ "${var.run-type}" == "docs" ]
+          then
+            echo ${var.mock-doc-version-test} > .bob/var.docs-mock-version;
+        else
+          if [ "${var.run-type}" != "precodereview"];
+            then
+              curl -L -H "X-JFrog-Art-Api:${env.ARM_TOKEN_SELI}" ${helm-drop-artifactory-docs} -o .bob/var.docs-mock-all-releases;
+              sed -ni "s/.*href=\"${helm-chart-name-docs}-\([^\"]*\)\.tgz\".*/\1/p" .bob/var.docs-mock-all-releases;
+              sed -ni "/^[^[:alpha:]]*$/p" .bob/var.docs-mock-all-releases;
+              sort -V -u -b -r -o .bob/var.docs-mock-all-releases .bob/var.docs-mock-all-releases;
+              cut -d" " -f1 .bob/var.docs-mock-all-releases | sed -n 1p > .bob/var.docs-mock-version;
+          fi
+        fi'
+    - task: set-pri_params
+      cmd: echo "${pri-param}" > .bob/var.pri_params
+    - task: set-fossa-id
+      cmd: uuidgen -r > .bob/var.fossa-id
+    - task: set-default-helm-chart-file-name
+      cmd: echo "${helm-chart-name-gas}-${var.version}.tgz" > .bob/var.helm-chart-file-name
+    - task: set-default-additional-dependencies-values
+      cmd: echo "" > .bob/var.additional-dependencies-chart-values
+    - task: set-default-additional-dependencies-values-ha
+      cmd: echo "" > .bob/var.additional-dependencies-chart-values-ha
+    - task: set-default-additional-dependencies-values-uis
+      cmd: echo "" > .bob/var.additional-dependencies-chart-values-uis
+    - task: set-default-additional-dependencies-values-file
+      cmd: echo "${mocks-config-yaml}" > .bob/var.additional-dependencies-chart-values-file
+    - task: set-k8s-namespace
+      cmd: echo ${env.BUILD_TAG} > .bob/var.k8s-namespace;
+    - task: docker-login
+      cmd:
+        - echo ${env.ARM_TOKEN_SELI} | docker login ${docker-registry-default} -u ${env.ARM_USER_SELI} --password-stdin
+
+  # common release tasks
+  release:
+    - task: upload-file
+      docker-image: adp-release-auto
+      cmd: upload_file.sh
+        --filename=${file-to-upload}
+        --repository=${repo-for-upload}
+        --api-token=${upload-api-token}
+
+  # common test tasks
+  test:
+    - task: get-ip-from-k8s
+      docker-image: k8-test
+      docker-flags:
+        - "--network=host"
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd:
+        - kubectl get service -n ${var.k8s-namespace} -o=jsonpath='{.items[?(@.spec.type == "LoadBalancer")].status.loadBalancer.ingress[0].ip}'
+        - kubectl get service -n ${var.k8s-namespace} -o=jsonpath='{.items[?(@.spec.type == "LoadBalancer")].status.loadBalancer.ingress[0].ip}' > .bob/var.ingress-iccr-ip

@@ -1,0 +1,88 @@
+pipeline {
+  agent {
+    node('presentation')
+  }
+  environment {
+    DEPLOY_IAM = true
+  }
+  options {
+    ansiColor('xterm')
+    timeout(time: 1, unit: 'HOURS')
+    buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
+  }
+  stages {
+    stage('Clean') {
+      steps {
+        sh 'bob clean'
+      }
+    }
+    stage('Check Bob rules') {
+      when {
+        expression {
+          return  sh(
+            script: 'bob -q ruleset-validation-helper:validate-rules',
+            returnStdout: true
+          ).trim() != '0'
+        }
+      }
+      steps {
+        sh './ci/scripts/ruleset-linter.sh'
+      }
+    }
+    stage('Set Bob variables') {
+      steps {
+        withCredentials([
+              usernamePassword(credentialsId: 'arm-seli-eeaprodart-token', usernameVariable: 'ARM_USER_SELI', passwordVariable: 'ARM_TOKEN_SELI'),
+              usernamePassword(credentialsId: 'arm-sero-eeaprodart-token', usernameVariable: 'ARM_USER_SERO', passwordVariable: 'ARM_TOKEN_SERO'),
+            ]) {
+              sh 'bob init-drop'
+              archiveArtifacts 'artifact.properties'
+            }
+      }
+    }
+    stage('Install npm dependencies') {
+      steps {
+        sh 'bob npm-install'
+      }
+    }
+    stage('Lint') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'jenkins-api-token', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASS')]) {
+          sh 'bob lint'
+        }
+      }
+    }
+    stage('Generate Spin Cli Image') {
+      steps {
+        lock(resource: null, label: 'presentation-ci', quantity: 1, variable: 'system') {
+          withCredentials([
+            usernamePassword(credentialsId: 'arm-seli-eeaprodart-token', usernameVariable: 'ARM_USER_SELI', passwordVariable: 'ARM_TOKEN_SELI'),
+            file(credentialsId: env.system, variable: 'KUBECONFIG')
+          ]) {
+            ansiColor('xterm') {
+              sh 'bob generate-spin-cli-image'
+            }
+          }
+        }
+      }
+    }
+    stage('Stop in case of dry-run')
+      {
+        when { expression { env.GERRIT_EVENT_TYPE != 'change-merged' } }
+        steps {
+          error('Build is failed triggering spinnaker pipelines') // currently, there aren't any, this is for future proofing
+        }
+      }
+  }
+  post {
+    cleanup {
+      sh "docker ps -a -q --filter label=$BUILD_TAG | xargs --no-run-if-empty  docker stop"
+      sh "docker ps -a -q --filter label=$BUILD_TAG | xargs --no-run-if-empty  docker rm"
+    }
+    failure {
+      mail to: 'f98b007c.ericsson.onmicrosoft.com@emea.teams.ms',
+      subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+      body: "Failure on ${env.BUILD_URL}"
+    }
+  }
+}

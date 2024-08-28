@@ -1,0 +1,7 @@
+{
+  "logging": {
+      "logLevel":  "info"
+  },
+  "logoutURL": "#",
+  "userAccountURL": ""
+}

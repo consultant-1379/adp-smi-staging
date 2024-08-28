@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "domain-ui-generic.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      dui-generic: {{ include "domain-ui-generic.name" . }}
+  template:
+    metadata:
+      labels:
+        dui-generic: {{ include "domain-ui-generic.name" . }}
+        {{- if  .Values.dst.enabled }}
+          {{- toYaml .Values.dst.labels | nindent 8 -}}
+        {{- end }}
+    spec:
+      containers:
+        - name: main
+          image: {{ template "domain-app.registryUrl" . }}/{{ .Values.imageCredentials.repoPath }}/{{ .Values.images.main.name }}:{{ .Values.images.main.tag }}
+          env:
+            - name: MOCK_ID
+              value: {{ include "domain-ui-generic.name" . }}
+            - name: TLS
+              value: "{{ .Values.global.security.tls.enabled }}"
+            - name: PUBLIC_PATH
+              value: {{ .Values.publicPath}}
+            - name: CONTEXT_ROOT
+              value: {{ .Values.contextRoot }}
+            - name: K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: K8S_CONTAINER
+              value: {{ .Chart.Name }}
+            - name: K8S_POD
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['dui-generic']
+            - name: OTEL_SAMPLING_RATE
+              value: {{ .Values.dst.sampler.samplingRate | quote }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ template "domain-ui-generic.otelExporterOtlpEndpoint" . }}
+            - name: OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT
+              value:  {{ .Values.dst.span.attributeValueLengthLimit | quote }}
+            - name: OTEL_SPAN_ATTRIBUTE_COUNT_LIMIT
+              value: {{ .Values.dst.span.attributePerSpanCountLimit | quote }}
+            - name: OTEL_SPAN_ATTRIBUTE_PER_EVENT_COUNT_LIMIT
+              value:  {{ .Values.dst.span.attributePerEventCountLimit | quote }}
+            - name: OTEL_SPAN_ATTRIBUTE_PER_LINK_COUNT_LIMIT
+              value:  {{ .Values.dst.span.attributePerLinkCountLimit | quote }}
+            - name: OTEL_SPAN_EVENT_COUNT_LIMIT
+              value: {{ .Values.dst.span.eventCountLimit | quote }}
+            - name: OTEL_SPAN_LINK_COUNT_LIMIT
+              value:  {{ .Values.dst.span.linkCountLimit | quote }}
+            - name: PROPAGATOR
+              value: {{ .Values.dst.propagator | quote }}
+            - name: OTEL_BSP_EXPORT_TIMEOUT
+              value: {{ .Values.dst.processor.exportTimeoutMillis | quote }}
+            - name: OTEL_BSP_MAX_EXPORT_BATCH_SIZE
+              value: {{ .Values.dst.processor.maxExportBatchSize | quote }}
+            - name: OTEL_BSP_MAX_QUEUE_SIZE
+              value: {{ .Values.dst.processor.maxQueueSize | quote }}
+            - name: OTEL_BSP_SCHEDULE_DELAY
+              value: {{ .Values.dst.processor.scheduledDelayMillis | quote }}
+        {{- if .Values.resources }}
+          resources:
+            {{- toYaml .Values.resources.main | nindent 12 }}
+        {{- end }}
+        {{- if .Values.global.security.tls.enabled }}
+          volumeMounts:
+          - name: root-ca-volume
+            mountPath: /runtime/server/certificates/root
+            readOnly: true
+          - name: help-aggregator-ca-volume
+            mountPath: /runtime/server/certificates/ca
+          - name: internal-cert
+            mountPath: /runtime/server/certificates/servercert
+          {{- if or (and .Values.ingress.enabled .Values.ingress.useContour) .Values.ingress.adpIccrCaSecret }}
+          - name: ingress-ca-volume
+            mountPath: /runtime/server/certificates/ingress
+            readOnly: true
+          {{- end }}
+        {{- end }}
+      volumes:
+      {{- if .Values.global.security.tls.enabled }}
+        - name: root-ca-volume
+          secret:
+            secretName: {{ .Values.configuration.siptls.rootSecretName }}
+        - name: help-aggregator-ca-volume
+          secret:
+            secretName: eric-oss-help-aggregator-internal-help-client-ca
+        - name: internal-cert
+          secret:
+            secretName: {{ include "domain-ui-generic.name" . }}-server-cert
+        {{- if or (and .Values.ingress.enabled .Values.ingress.useContour) .Values.ingress.adpIccrCaSecret }}
+        - name: ingress-ca-volume
+          projected:
+            sources:
+            - secret:
+              {{- if .Values.ingress.adpIccrCaSecret }}
+                name: {{ .Values.ingress.adpIccrCaSecret }}
+              {{- else }}
+                name: {{ .Values.ingress.adpIccrServiceName }}-client-ca
+              {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- if include "domain-app.pullSecrets" . }}
+      imagePullSecrets:
+        - name: {{ template "domain-app.pullSecrets" . }}
+      {{- end}}

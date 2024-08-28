@@ -1,0 +1,12 @@
+{{- if (index .Values "eric-tm-ingress-controller-cr" "enabled") }}
+apiVersion: siptls.sec.ericsson.com/v1
+kind: InternalUserCA
+metadata:
+  name: ingress-ctrl-common-client-ca
+spec:
+  kubernetes:
+    generatedSecretName: eric-eea-ingress-ctrl-common-client-ca
+  certificate:
+    subject:
+      cn: eric-eea-ingress-ctrl-common-client-ca
+{{- end }}

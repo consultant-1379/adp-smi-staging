@@ -1,0 +1,94 @@
+global:
+  uid:
+  registry:
+    url: armdocker.rnd.ericsson.se
+  # pullSecret:
+  security:
+    tls:
+      enabled: true
+
+ingress:
+  enabled: false
+  useContour: false
+  path: /domain-ui
+  hostname:
+  ingressClass:
+  adpIccrCaSecret:
+  adpIccrServiceName: eric-tm-ingress-controller-cr
+  iccrIP:
+  tls:
+    passthrough: false
+    enabled:
+    existingSecret: eric-oss-help-aggregator-ingress-external-server-cert
+
+productInfo:
+  rstate: RSTATE
+  version: 1.0.0-0
+
+imageCredentials:
+  repoPath: REPO_PATH
+  # pullSecret:
+  registry:
+    url:
+
+images:
+  main:
+    name: IMAGE_NAME
+    tag: VERSION
+
+podDisruptionBudget:
+  minAvailable: 1
+
+service:
+  type: ClusterIP
+  port: 4000
+  targetPort: 4000
+
+replicaCount: 1
+
+configuration:
+  siptls:
+    rootSecretName: eric-sec-sip-tls-trusted-root-cert
+
+## Using RollingUpdate, specify the update strategy for statefulset
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable:
+    maxSurge:
+
+# medium.com/faun/java-application-optimization-on-kubernetes-on-the-example-of-a-spring-boot-microservice-cf3737a2219c
+# Monitor the deployed pod, to set these resource limits more accurately
+resources:
+  main:
+    limits:
+      cpu: 2000m
+      memory: 300Mi
+    requests:
+      cpu: 500m
+      memory: 300Mi
+
+labels:
+  help.ericsson.com/part-of: workspace-gui
+
+dst:
+  enabled: false
+  collector:
+    host: eric-dst-collector
+    otlpHttpPort: 4318
+  sampler:
+    samplingRate: 0
+  labels: { eric-dst-collector-access: "true", eric-dst-query-access: "true" }
+  span:
+    attributeValueLengthLimit: 128 # range="0..max"
+    attributePerSpanCountLimit: 128 # range="0..max"
+    attributePerEventCountLimit: 128 # range="0..max"
+    attributePerLinkCountLimit: 128 # range="0..max"
+    eventCountLimit: 128 # range="0..max"
+    linkCountLimit: 128 # range="0..max"
+  propagator: b3 # ["b3", "tracecontext"]
+  processor:
+    exportTimeoutMillis: 30000
+    maxExportBatchSize: 512
+    maxQueueSize: 2048
+    scheduledDelayMillis: 5000

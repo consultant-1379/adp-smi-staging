@@ -1,0 +1,75 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run current backend integration test",
+      "cwd": "${workspaceFolder}/integration-tests",
+      "internalConsoleOptions": "openOnSessionStart",
+      "program": "node_modules/mocha/bin/mocha",
+      "args": ["--no-timeout", "--colors", "${file}"],
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "env": {
+        "NODE_ENV": "test",
+        "HOSTNAME": "${input:urlPrefix}.gas.${input:smiStagingURL}",
+        "UIS_HOSTNAME": "${input:urlPrefix}.uis.${input:smiStagingURL}",
+        "HA_VERSION": "${input:helpAggrVersion}",
+        "DST_HOSTNAME": "${input:urlPrefix}.dst.${input:smiStagingURL}"
+      },
+      "type": "node",
+      "presentation": {
+        "hidden": false,
+        "order": 1
+      }
+    },
+    {
+      "name": "WebdriverIO run current integration test",
+      "type": "node",
+      "request": "launch",
+      "protocol": "inspector",
+      "port": 5859,
+      "runtimeExecutable": "${workspaceRoot}/integration-tests/node_modules/.bin/wdio",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/integration-tests/node_modules/.bin/wdio.cmd"
+      },
+      "cwd": "${workspaceRoot}",
+      "console": "integratedTerminal",
+      "args": [
+        "integration-tests/test/ui/config/wdio.conf.js",
+        "--local",
+        "--spec-reporter",
+        "--spec",
+        "${relativeFile}"
+      ],
+      "skipFiles": [],
+      "env": {
+        "DEBUG": "noBreak",
+        "HOSTNAME": "${input:urlPrefix}.gas.${input:smiStagingURL}",
+        "FRONTEND_PATH": "/ui"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "smiStagingURL",
+      "type": "promptString",
+      "description": "The host name of your namespace",
+      "default": "10.196.123.48.nip.io"
+    },
+    {
+      "id": "urlPrefix",
+      "type": "promptString",
+      "description": "The URL prefix of your namespace",
+      "default": "SIGNUM"
+    },
+    {
+      "id": "helpAggrVersion",
+      "type": "promptString",
+      "description": "The version of Help aggregator",
+      "default": "0.18.0-25"
+    }
+  ]
+}

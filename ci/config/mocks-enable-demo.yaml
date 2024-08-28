@@ -1,0 +1,47 @@
+demo-ui-service-ecm:
+  enabled: true
+
+demo-ui-service-eea:
+  enabled: true
+
+demo-ui-service-enm:
+  enabled: true
+
+demo-ui-service-esma:
+  enabled: true
+
+demo-ui-service-esmb:
+  enabled: true
+
+demo-ui-service-esmc:
+  enabled: true
+
+demo-ui-service-eui1:
+  enabled: true
+
+demo-ui-service-eui2:
+  enabled: true
+
+demo-ui-service-3pp:
+  enabled: true
+
+demo-ui-service-tree:
+  enabled: true
+
+demo-ui-service-action-consumer:
+  enabled: true
+
+demo-ui-service-action-provider:
+  enabled: true
+
+help-center-mock-eea:
+  enabled: true
+
+help-center-mock-eea-real-doc:
+  enabled: true
+
+help-center-mock-ecm:
+  enabled: true
+
+help-center-docs-mock:
+  enabled: true

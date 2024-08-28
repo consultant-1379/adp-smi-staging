@@ -1,0 +1,18 @@
+{{- if (index .Values "eric-tm-ingress-controller-cr" "enabled") }}
+apiVersion: siptls.sec.ericsson.com/v1
+kind: InternalCertificate
+metadata:
+  name: ingress-ctrl-applications-internal-client-cert
+spec:
+  kubernetes:
+    generatedSecretName: eric-tm-ingress-controller-cr-internal-client-cert
+    secretType: tls
+  certificate:
+    subject:
+      cn: eric-tm-ingress-controller-cr
+    issuer:
+      reference: ingress-ctrl-common-client-ca
+    extendedKeyUsage:
+      tlsClientAuth: true
+      tlsServerAuth: false
+{{- end }}

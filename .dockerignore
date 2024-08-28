@@ -1,0 +1,10 @@
+*
+!ha-mocks
+!.bob/temp-mock
+# Ignore these specifically, as they can be nested in directories
+**/node_modules
+**/.cdt
+**/*.pyc
+**/*.gitignore
+**/__tests__
+**/__mocks__

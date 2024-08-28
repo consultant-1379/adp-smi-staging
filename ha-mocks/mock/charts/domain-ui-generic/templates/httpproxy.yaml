@@ -1,0 +1,37 @@
+{{- if and (.Values.ingress.enabled) (.Values.ingress.useContour) -}}
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: {{ include "domain-ui-generic.name" . }}-httpproxy
+  annotations:
+{{- if .Values.ingress.ingressClass }}
+    kubernetes.io/ingress.class: {{.Values.ingress.ingressClass | toString }}
+{{- end }}
+spec:
+  virtualhost:
+    fqdn: {{ include "domain-app.iccrHostname" . }}
+    {{- if .Values.ingress.tls.enabled }}
+    tls:
+      minimumProtocolVersion: "1.2"
+      secretName: {{ .Values.ingress.tls.existingSecret }}
+    {{- end }}
+  routes:
+    - conditions:
+      - prefix: {{ include "domain-app.ingressPath" . }}
+      services:
+        - name: {{ include "domain-ui-generic.name" . }}-http
+          port: {{ .Values.service.port }}
+          {{- if .Values.global.security.tls.enabled }}
+          protocol: tls
+          validation:
+            caSecret: {{ .Values.configuration.siptls.rootSecretName }}
+            subjectName: {{ include "domain-ui-generic.name" . }}-http
+          {{- end }}
+      pathRewritePolicy:
+        replacePrefix:
+          - prefix: {{ include "domain-app.ingressPath" . }}
+            replacement: /
+      timeoutPolicy:
+        response: infinity
+        idle: infinity
+{{- end }}

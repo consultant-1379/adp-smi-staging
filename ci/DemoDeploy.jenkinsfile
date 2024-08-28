@@ -1,0 +1,120 @@
+def invalidCombination() {
+  return (env.GAS_VERSION == '' && env.GAS_TYPE == 'concrete version') ||
+         (env.HA_VERSION == '' && env.HA_TYPE == 'concrete version') ||
+         (env.UIS_VERSION == '' && env.UIS_TYPE == 'concrete version')
+}
+
+def missingLabel() {
+  return (env.NAMESPACE_LABEL_VALUE == '')
+}
+
+pipeline {
+  agent {
+    node('presentation')
+  }
+  options {
+    ansiColor('xterm')
+    timeout(time: 1, unit: 'HOURS')
+    buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
+  }
+  parameters {
+    choice(name: 'GAS_TYPE', choices: ['concrete version', 'latest drop', 'latest release'], description: 'The type of the GAS Helm chart version to deploy. (e.g. concrete version, latest drop, latest release)')
+    choice(name: 'HA_TYPE', choices: ['concrete version', 'latest drop', 'latest release'], description: 'The type of the HA Helm chart version to deploy (e.g. concrete version, latest drop, latest release)')
+    choice(name: 'UIS_TYPE', choices: ['concrete version', 'latest drop', 'latest release'], description: 'The type of the UI Settings Helm chart version to deploy. (e.g. concrete version, latest drop, latest release)')
+    string(name: 'GAS_VERSION', description: 'ONLY APPLICABLE if \'concrete version\' is selected above. The version of the GAS Helm chart to deploy. Please see drop packages here: https://arm.epk.ericsson.se/artifactory/proj-eea-drop-helm/eric-adp-gui-aggregator-service/ and release packages here: https://arm.epk.ericsson.se/artifactory/proj-eea-released-helm/eric-adp-gui-aggregator-service/')
+    string(name: 'HA_VERSION', description: 'ONLY APPLICABLE if \'concrete version\' is selected above. The version of the HA Helm chart to deploy. Please see drop packages here: https://arm.epk.ericsson.se/artifactory/proj-eea-drop-helm/eric-oss-help-aggregator/ and release packages here: https://arm.epk.ericsson.se/artifactory/proj-eea-released-helm/eric-oss-help-aggregator/')
+    string(name: 'UIS_VERSION', description: 'ONLY APPLICABLE if \'concrete version\' is selected above. The version of the UI Settings Helm chart to deploy. Please see drop packages here: https://arm.epk.ericsson.se/artifactory/proj-eea-drop-helm/eric-oss-ui-settings/ and release packages here: https://arm.epk.ericsson.se/artifactory/proj-eea-released-helm/eric-oss-ui-settings/')
+    string(name: 'DOCS_VERSION', description: 'Version of the  documentation image to be deployed. If missing, the latest version will be used.')
+    string(name: 'DEMO_INGRESS_PATH', description: 'The path where GAS will be available, set e.g. "adp-ui-service". If empty, the current BUILD_TAG is used. If IAM is selected then "/" ingess path will be used by default.')
+    string(name: 'DEMO_NAMESPACE', description: 'The name of the demo namespace. Required to be filled in case of + version demo. If empty, the generated namespace is used.')
+    string(name: 'NAMESPACE_LABEL_VALUE', description: 'The label value of the demo namespace. Can be "release" or any other word. "drop" is to be used only by scheduled run.')
+    booleanParam(name: 'INGRESS_TLS', defaultValue: false, description: 'Enable INGRESS TLS.')
+    booleanParam(name: 'DEPLOY_IAM', defaultValue: false, description: 'Enable IAM. Manual steps must be done to deploy GAS pods.')
+  }
+  stages {
+    stage('Stop in case invalid combination') {
+      when { expression { invalidCombination() } }
+      steps {
+        error('Build is failed because the combination is wrong, please specify version when "concrete version" is selected as type')
+      }
+    }
+    stage('Stop if label is missing') {
+      when { expression { missingLabel() } }
+      steps {
+        error('Build is failed because the NAMESPACE_LABEL_VALUE was not provided')
+      }
+    }
+    stage('Clean') {
+      steps {
+        sh 'bob clean'
+      }
+    }
+    stage('Init') {
+      steps {
+        lock(resource: null, label: 'presentation-ci', quantity: 1, variable: 'system') {
+          withCredentials([
+            usernamePassword(credentialsId: 'arm-seli-eeaprodart-token', usernameVariable: 'ARM_USER_SELI', passwordVariable: 'ARM_TOKEN_SELI'),
+            usernamePassword(credentialsId: 'arm-sero-eeaprodart-token', usernameVariable: 'ARM_USER_SERO', passwordVariable: 'ARM_TOKEN_SERO'),
+            file(credentialsId: env.system, variable: 'KUBECONFIG')
+          ]) {
+            ansiColor('xterm') {
+              sh 'bob init-demo'
+            }
+          }
+        }
+      }
+    }
+    stage('Cleanup namespace, get IP and package') {
+      steps {
+        lock(resource: null, label: 'presentation-ci', quantity: 1, variable: 'system') {
+          withCredentials([
+            usernamePassword(credentialsId: 'arm-seli-eeaprodart-token', usernameVariable: 'ARM_USER_SELI', passwordVariable: 'ARM_TOKEN_SELI'),
+            usernamePassword(credentialsId: 'arm-sero-eeaprodart-token', usernameVariable: 'ARM_USER_SERO', passwordVariable: 'ARM_TOKEN_SERO'),
+            file(credentialsId: env.system, variable: 'KUBECONFIG')
+          ]) {
+            ansiColor('xterm') {
+              sh 'bob -r ci/rulesets/demo-rules.yaml prepare-demo'
+            }
+          }
+        }
+      }
+    }
+    stage('Deploy GAS and HA and CI chart') {
+      steps {
+        lock(resource: null, label: 'presentation-ci', quantity: 1, variable: 'system') {
+          withCredentials([
+            usernamePassword(credentialsId: 'arm-seli-eeaprodart-token', usernameVariable: 'ARM_USER_SELI', passwordVariable: 'ARM_TOKEN_SELI'),
+            usernamePassword(credentialsId: 'arm-sero-eeaprodart-token', usernameVariable: 'ARM_USER_SERO', passwordVariable: 'ARM_TOKEN_SERO'),
+            file(credentialsId: env.system, variable: 'KUBECONFIG')
+          ]) {
+            ansiColor('xterm') {
+              sh 'bob -r ci/rulesets/demo-rules.yaml deploy-demo'
+            }
+          }
+        }
+      }
+    }
+    stage('Print Ingress URL') {
+      steps {
+        sh 'bob -r ci/rulesets/demo-rules.yaml echo-demo-ingress-url'
+      }
+    }
+  }
+  post {
+    always {
+      archiveArtifacts '.bob/var.hostname'
+      archiveArtifacts '.bob/var.ingress-hostname'
+      archiveArtifacts '.bob/var.ha-ingress-hostname'
+      archiveArtifacts '.bob/var.demo-ingress-url'
+    }
+    cleanup {
+      sh "docker ps -a -q --filter label=$BUILD_TAG | xargs --no-run-if-empty  docker stop"
+      sh "docker ps -a -q --filter label=$BUILD_TAG | xargs --no-run-if-empty  docker rm"
+    }
+    failure {
+      mail to: 'f98b007c.ericsson.onmicrosoft.com@emea.teams.ms',
+      subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+      body: "Failure on ${env.BUILD_URL}"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+pipeline {
+  agent {
+    node('presentation')
+  }
+  options {
+    ansiColor('xterm')
+    timeout(time: 1, unit: 'HOURS')
+    buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
+  }
+  stages {
+    stage('Clean') {
+      steps {
+        sh 'bob clean'
+      }
+    }
+    stage('Check Bob rules') {
+      when {
+        expression {
+          return  sh(
+            script: 'bob -q ruleset-validation-helper:validate-rules',
+            returnStdout: true
+          ).trim() != '0'
+        }
+      }
+      steps {
+        sh './ci/scripts/ruleset-linter.sh'
+      }
+    }
+    stage('Set Bob variables') {
+      steps {
+        withCredentials([
+          usernamePassword(credentialsId: 'arm-seli-eeaprodart-token', usernameVariable: 'ARM_USER_SELI', passwordVariable: 'ARM_TOKEN_SELI'),
+          usernamePassword(credentialsId: 'arm-sero-eeaprodart-token', usernameVariable: 'ARM_USER_SERO', passwordVariable: 'ARM_TOKEN_SERO')
+        ]) {
+          sh 'bob init-precodereview'
+        }
+      }
+    }
+    stage('Install npm dependencies') {
+      steps {
+        sh 'bob npm-install'
+      }
+    }
+    stage('Lint') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'jenkins-api-token', usernameVariable: 'JENKINS_USER', passwordVariable: 'JENKINS_PASS')]) {
+          sh 'bob lint'
+        }
+      }
+    }
+  }
+  post {
+    cleanup {
+      sh "docker ps -a -q --filter label=$BUILD_TAG | xargs --no-run-if-empty  docker stop"
+      sh "docker ps -a -q --filter label=$BUILD_TAG | xargs --no-run-if-empty  docker rm"
+    }
+  }
+}

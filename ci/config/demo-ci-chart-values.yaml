@@ -1,0 +1,93 @@
+eric-oss-help-aggregator:
+  ingress:
+    enabled: true
+    useContour: true
+    hostname:
+    path: /
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+  log:
+    streamingMethod: indirect
+  configuration:
+    faultIndications:
+      enabled: false
+    guiAggregator:
+      enabled: true
+  metrics:
+    enabled: false
+  authorizationProxy:
+    enabled: false
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+eric-oss-ui-settings:
+  ingress:
+    enabled: true
+    useContour: true
+    hostname:
+    path: /
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+  configuration:
+    faultIndications:
+      enabled: false
+  metrics:
+    enabled: false
+  log:
+    streamingMethod: indirect
+  authorizationProxy:
+    enabled: false
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+eric-sec-access-mgmt:
+  enabled: false
+  ingress:
+    hostname:
+  authenticationProxy:
+    ingress:
+      hostname:
+
+eric-data-document-database-iam:
+  enabled: false
+
+eric-data-document-database-pg:
+  enabled: false
+
+help-center-mock-eea:
+  publicPath: help-center-mock-eea
+  contextRoot: ui
+  ingress:
+    enabled: true
+    useContour: true
+    hostname: localhost
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+help-center-mock-eea-real-doc:
+  publicPath: help-center-mock-eea-real-doc
+  contextRoot: overview
+  ingress:
+    enabled: true
+    useContour: true
+    hostname: localhost
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+help-center-mock-ecm:
+  publicPath: help-center-mock-ecm
+  contextRoot: some-path
+  ingress:
+    enabled: true
+    useContour: true
+    hostname: localhost
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common
+
+help-center-docs-mock:
+  publicPath: help-center-docs-mock
+  contextRoot: docs-mock
+  ingress:
+    enabled: true
+    useContour: true
+    hostname: localhost
+    ingressClass: EEA-Applications
+    adpIccrServiceName: eric-eea-ingress-ctrl-common

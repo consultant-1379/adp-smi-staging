@@ -1,0 +1,86 @@
+modelVersion: 2.0
+
+docker-images:
+  - spin-cli: armdocker.rnd.ericsson.se/proj-eea-drop/adp-smi-staging-spin-cli:latest
+
+env:
+  - RESTORE_PIPELINES (default=notset)
+  - SPIN_USERNAME (default=notset)
+  - SPIN_PASSWORD (default=notset)
+
+var:
+  - updated-spinnaker-ci-configs
+
+properties:
+  - spinnaker-folder: .bob/spinnaker
+  - spinnaker-config-folder: ${spinnaker-folder}/config
+  - spinnaker-config-path: ${spinnaker-config-folder}/spin_cli.config
+  - spinnaker-endpoint: https://spinnaker-api.rnd.gic.ericsson.se
+  - spinnaker-ci-folder: ci/spinnaker
+  - spinnaker-config-json: ci/spinnaker/spinnaker-pipeline.json
+
+rules:
+  init:
+    - rule: generate-spin-cli-config
+
+  generate-spin-cli-config:
+    - task: create-config-folder
+      cmd: mkdir -p ${spinnaker-config-folder}
+    - task: generate-spin-cli-config
+      cmd:
+        - >
+          bash -c ' echo -e "gate:\n  endpoint: ${spinnaker-endpoint}\nauth:\n  enabled: true\n  basic:\n    username: ${env.SPIN_USERNAME}\n    password: ${env.SPIN_PASSWORD}" > ${spinnaker-config-path}'
+
+  restore-spinnaker-pipelines:
+    - task: restore-all-pipelines
+      docker-image: spin-cli
+      cmd: >
+        bash -c '
+          IFS=$','
+          read -ra restore_pipelines <<< "${env.RESTORE_PIPELINES}"
+          if [ $restore_pipelines == 'all' ]; then
+            for spinnakerConfig in ${spinnaker-ci-folder}/*.jsonnet ;
+            do
+              jsonnet $spinnakerConfig > ${spinnaker-config-json} && spin pipeline save --config ${spinnaker-config-path} --file ${spinnaker-config-json}
+              rm -f ${spinnaker-config-json}
+            done;
+          else
+            for spinnakerName in "${restore_pipelines[@]}" ;
+            do
+              spinnakerConfig=${spinnaker-ci-folder}/$spinnakerName.jsonnet
+              jsonnet $spinnakerConfig > ${spinnaker-config-json} && spin pipeline save --config ${spinnaker-config-path} --file ${spinnaker-config-json}
+              rm -f ${spinnaker-config-json}
+            done;
+          fi
+          '
+
+  check-config-updates:
+    - task: check-configs-changes
+      cmd: >
+        bash -c '
+          for spinnakerConfig in ${spinnaker-ci-folder}/*.jsonnet ;
+          do
+            configChanges=$(git diff HEAD^ -- $spinnakerConfig | wc -l)
+            if [ $configChanges != 0 ]; then
+              configsList+="$spinnakerConfig "
+              echo "$spinnakerConfig was updated and will be uploaded!"
+            fi
+          done;
+          echo "$configsList" > .bob/var.updated-spinnaker-ci-configs
+          '
+
+  upload-updated-configs:
+    - task: upload-configs
+      docker-image: spin-cli
+      cmd: >
+        bash -c '
+          IFS=$'\t'
+          if [ "${var.updated-spinnaker-ci-configs}" != "None" ]; then
+            for updatedConfig in ${var.updated-spinnaker-ci-configs} ;
+            do
+              jsonnet $updatedConfig > ${spinnaker-config-json} && spin pipeline save --config ${spinnaker-config-path} --file ${spinnaker-config-json}
+              rm -f ${spinnaker-config-json}
+            done;
+          fi
+          '
+
